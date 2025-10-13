@@ -1,0 +1,59 @@
+{
+  "groups": [
+    {
+      "title": "Cluster Group 1",
+      "description": "This is the description of the cluster group. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "clusters": [
+        {
+          "title": "Cluster 1",
+          "description": "This is a cluster description",
+          "url": "real/url/here",
+          "id": "564e98ff-634a-4d7f-b1a2-c31cd1ef5701"
+        },
+        {
+          "title": "Multiviewer",
+          "description": "This is a multiviewer cluster!",
+          "url": "multiviewer/url/here",
+          "type": "multiviewer",
+          "id": "1f5e8c4d-c0e7-4478-a9b3-fa132224cdaa"
+        },
+        {
+          "title": "Disabled Cluster",
+          "description": "This is a disabled cluster",
+          "type": "disabled",
+          "id": "f1c3eddd-4625-4f1f-bf85-febfaed090ac"
+        },
+        {
+          "title": "Silent Cluster",
+          "description": "This is a silent cluster",
+          "type": "noAlerts",
+          "id": "632af717-a87d-44f1-bdef-6efbd2e22762"
+        }
+      ],
+      "id": "53ed9223-345d-41e0-afca-e74197fc7258"
+    },
+    {
+      "title": "Cluster Group 2",
+      "clusters": [
+        {
+          "title": "Another Cluster",
+          "url": "real/url/here",
+          "id": "957668b9-877b-4b88-a0c8-731203e694d5"
+        }
+      ],
+      "id": "d7335413-b438-489b-980e-b38738b18e92"
+    }
+  ],
+  "settings": {
+    "general": {
+      "noPackets": 0,
+      "noPacketsLength": 10,
+      "outOfDate": 30,
+      "esQueryTimeout": 5,
+      "removeIssuesAfter": 60,
+      "removeAcknowledgedAfter": 15
+    }
+  },
+  "name": "parliament",
+  "version": 7
+}

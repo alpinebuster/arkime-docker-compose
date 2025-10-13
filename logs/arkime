@@ -1,0 +1,11 @@
+/opt/arkime/logs/capture.log
+/opt/arkime/logs/viewer.log
+/opt/arkime/logs/wise.log
+/opt/arkime/logs/cont3xt.log
+/opt/arkime/logs/parliament.log {
+    hourly
+    rotate 168
+    notifempty
+    copytruncate
+    missingok
+}

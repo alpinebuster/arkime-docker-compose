@@ -1,0 +1,9 @@
+[submodule "docs"]
+	path = docs
+	url = https://github.com/alpinebuster/arkime-docs.git
+[submodule "arkime"]
+	path = arkime
+	url = https://github.com/alpinebuster/arkime.git
+[submodule "plugins/ja4plus"]
+	path = plugins/ja4plus
+	url = https://github.com/alpinebuster/arkime-ja4.git
