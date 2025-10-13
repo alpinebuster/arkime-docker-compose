@@ -32,10 +32,24 @@ fi
 # Give option to init ElasticSearch
 if [ "$INITIALIZE_DB" = "true" ] ; then
     echo "Init elasticsearch and then create an admin..."
-    # Ref: https://github.com/arkime/arkime/blob/0e6ebe992c28b8b63a01ef778082a441c79520d6/db/db.pl#L179C16-L179C27
-    # echo INIT | "${ARKIME_DIR}/db/db.pl" --insecure "$ARKIME__elasticsearch" init
-    echo INIT | "${ARKIME_DIR}/db/db.pl" "$ARKIME__elasticsearch" init --ifneeded 
-    "${ARKIME_DIR}"/bin/arkime_add_user.sh "$ARKIME_USERNAME" "Admin User" "$ARKIME_PASSWORD" --admin
+
+    if [ ! -f $ARKIME_DIR/etc/.initialized ]; then
+        echo INIT | $ARKIME_DIR/db/db.pl "$ARKIME__elasticsearch" init
+        $ARKIME_DIR/bin/arkime_add_user.sh "$ARKIME_USERNAME" "Admin User" $ARKIME_PASSWORD --admin
+        echo $ARKIME_VERSION > $ARKIME_DIR/etc/.initialized
+    else
+        # possible update
+        read old_ver < $ARKIME_DIR/etc/.initialized
+        # detect the newer version
+        newer_ver=`echo -e "$old_ver\n$ARKIME_VERSION" | sort -rV | head -n 1`
+        # the old version should not be the same as the newer version
+        # otherwise -> upgrade
+        if [ "$old_ver" != "$newer_ver" ]; then
+            echo "Upgrading OS database..."
+            $ARKIME_DIR/db/db.pl "$ARKIME__elasticsearch" upgradenoprompt
+            echo $ARKIME_VERSION > $ARKIME_DIR/etc/.initialized
+        fi
+    fi
 
     echo "Finished the DB initializing."
     exit 0

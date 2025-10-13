@@ -135,7 +135,7 @@ services:
       - ARKIME_PASSWORD=${ARKIME_PASSWORD}
       - ARKIME_DIR=${ARKIME_DIR}
       - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
-      - ARKIME__prefix=zzz
+      # - ARKIME__prefix=zzz
       - CAPTURE=off
       - VIEWER=off
       - PARLIAMENT=off
