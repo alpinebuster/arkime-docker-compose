@@ -1,6 +1,6 @@
 # NOTE: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]; for more information see [https://www.elastic.co/guide/en/elasticsearch/reference/8.17/bootstrap-checks-max-map-count.html]
 # Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
-# Permanently -> `vi /etc/sysctl.conf` -> add `vm.max_map_count=262144` -> `sudo sysctl -p`
+# Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
 # 
 # `sudo chown -R 1000:1000 ./db/main ./db/node-1`
 # `source .env`
@@ -15,6 +15,7 @@ services:
     container_name: arkime_es_os-main
     restart: unless-stopped
     ports:
+      # NOTE: this affects containers which using host mode
       - 19200:9200
     env_file: ["./.env"]
     environment:
@@ -214,13 +215,20 @@ services:
       - ARKIME_USERNAME=${ARKIME_USERNAME}
       - ARKIME_PASSWORD=${ARKIME_PASSWORD}
       - ARKIME_DIR=${ARKIME_DIR}
-      - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
+      # NOTE: These variables take precedence over configuration file settings!!!
+      # NOTE: when `network_mode: "host"`, we need to use the host: `localhost:19200`
+      - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@localhost:19200
       - ARKIME__interface=${ARKIME__interface}
       - CAPTURE=on
       - VIEWER=off
       - PARLIAMENT=off
       - CONT3XT=off
       - WISE=off
+    # NOTE: needed by `tpacketv3BlockSize`
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     depends_on:
       arkime_es_os-main:
         condition: service_healthy
