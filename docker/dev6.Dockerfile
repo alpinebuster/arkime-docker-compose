@@ -70,8 +70,8 @@ ENV WISE $WISE
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  git clone --single-branch https://github.com/arkime/arkime.git && \
-  (cd arkime; git checkout $ARKIME_BRANCH; ./easybutton-build.sh --nothirdparty --kafka --rminstall)
+  git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/arkime/arkime.git && \
+  (cd arkime; ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
     (cd /arkime; ldd capture/capture) && \
     export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
