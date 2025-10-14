@@ -1,5 +1,5 @@
 #!/bin/bash
-export BASEDIR=$ARKIME_DIR
+export BASEDIR=$ARKIME_INSTALL_DIR
 
 FOREVER=0
 

@@ -1,7 +1,7 @@
-ARG DOCKER_UBUNTU_VERSION=22.04
+ARG DOCKER_UBUNTU_VERSION=24.04
 FROM ubuntu:${DOCKER_UBUNTU_VERSION}
 
-ARG ARKIME_BRANCH=main
+ARG ARKIME_BRANCH=dev6
 ENV ARKIME_BRANCH $ARKIME_BRANCH
 
 LABEL org.opencontainers.image.authors="alpinebuster <imzqqq@hotmail.com>"
@@ -23,11 +23,7 @@ RUN \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list && \
   apt-get update && \
-  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata apt-utils software-properties-common gnupg zstd && \
-  (cd /tmp && wget https://packages.ntop.org/apt-stable/22.04/all/apt-ntop-stable.deb && apt install -y ./apt-ntop-stable.deb) && \
-  # NOTE: must install `pfring` after `ntopng`
-  apt-get update && \
-  apt-get install -y pfring
+  apt-get install -y lsb-release build-essential make python3-pip git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd
 
 
 # Declare default `ARG`s
@@ -43,7 +39,7 @@ ARG ARKIME_HOSTNAME=localhost
 ARG ARKIME_INTERFACE=enp6s0
 ARG ARKIME_USERNAME=arkime
 ARG ARKIME_PASSWORD=arkime_pwd
-ARG ARKIME_DIR="/opt/arkime"
+ARG ARKIME_INSTALL_DIR="/opt/arkime"
 ARG ARKIME_APP_DIR="/opt/arkime/app"
 ARG CAPTURE=on
 ARG VIEWER=on
@@ -62,7 +58,7 @@ ENV ARKIME_HOSTNAME $ARKIME_HOSTNAME
 ENV ARKIME_INTERFACE $ARKIME_INTERFACE
 ENV ARKIME_USERNAME $ARKIME_USERNAME
 ENV ARKIME_PASSWORD $ARKIME_PASSWORD
-ENV ARKIME_DIR $ARKIME_DIR
+ENV ARKIME_INSTALL_DIR $ARKIME_INSTALL_DIR
 ENV ARKIME_APP_DIR $ARKIME_APP_DIR
 ENV CAPTURE $CAPTURE
 ENV VIEWER $VIEWER
@@ -77,18 +73,19 @@ RUN \
   git clone https://github.com/arkime/arkime.git && \
   (cd arkime; git checkout $ARKIME_BRANCH; ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
-    export PATH=${ARKIME_DIR}/bin:$PATH && \
+    ldd capture/capture && \
+    export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
     (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
     # NOTE: create the etc/oui.txt, this is slow
     # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'startarkime.sh'
-    "${ARKIME_DIR}/bin/arkime_update_geo.sh"
+    "${ARKIME_INSTALL_DIR}/bin/arkime_update_geo.sh"
 
 # Add scripts
 # NOTE: The current docker compose context is `project_root_dir/`
-COPY ./etc ${ARKIME_DIR}/etc/
+COPY ./etc ${ARKIME_INSTALL_DIR}/etc/
 COPY ./scripts ${ARKIME_APP_DIR}/
 RUN chmod 755 ${ARKIME_APP_DIR}/*.sh
-ENV PATH="${ARKIME_DIR}/bin:${ARKIME_APP_DIR}:${PATH}"
+ENV PATH="${ARKIME_INSTALL_DIR}/bin:${ARKIME_APP_DIR}:${PATH}"
 
 
 # ja4plus
@@ -106,7 +103,7 @@ RUN cp ../ja4/ja4plus.c capture/plugins && \
     (cd ../ja4; make) && \
     # `/arkime/tests/`
     (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
-RUN mv capture/plugins/ja4plus*.so ${ARKIME_DIR}/plugins/ && \
+RUN mv capture/plugins/ja4plus*.so ${ARKIME_INSTALL_DIR}/plugins/ && \
     rm -f capture/plugins/ja4plus.c
 
 
@@ -119,7 +116,7 @@ RUN useradd -u 2000 opensearch; \
 );
 
 
-WORKDIR ${ARKIME_DIR}
+WORKDIR ${ARKIME_INSTALL_DIR}
 # Clean up deps to reduce image size
 RUN \
   rm -rf /arkime && \

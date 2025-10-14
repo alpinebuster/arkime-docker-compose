@@ -4,5 +4,7 @@
         "healthcheck",
         "localtime",
         "opensearch"
-    ]
+    ],
+    "editor.fontSize": 13,
+    "remote.autoForwardPorts": false
 }

@@ -8,4 +8,4 @@ do
 done
 
 # Wipe is the same initialize except it keeps users intact
-echo WIPE | "${ARKIME_DIR}"/db/db.pl "$ARKIME__elasticsearch" wipe
+echo WIPE | "${ARKIME_INSTALL_DIR}"/db/db.pl "$ARKIME__elasticsearch" wipe

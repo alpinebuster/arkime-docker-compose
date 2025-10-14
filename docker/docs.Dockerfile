@@ -12,10 +12,8 @@ RUN \
   locales && \
   rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/src/app && chmod -R 777 /usr/src/app
-
 WORKDIR /usr/src/app
-
-# NOTE: The current docker compose context is `project_root_dir/docs/arkime`
+# NOTE: The current docker compose context is `project_root_dir/docs/`
 COPY . .
 
 # Ref: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
@@ -24,8 +22,6 @@ COPY . .
 #   # sed -i 's|source "https://rubygems.org"|source "https://gems.ruby-china.com/"|g' "./Gemfile" && \
 #   # sed -i 's|source "https://rubygems.org"|source "https://mirrors.aliyun.com/rubygems/"|g' "./Gemfile" && \
 #   bundle install --gemfile=Gemfile --retry 12
-
-# Ref: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
 RUN \
   --mount=type=cache,target=/root/.gem,sharing=locked \
   sed -i 's|gem "github-pages", group: :jekyll_plugins|#gem "github-pages", group: :jekyll_plugins|g' "./Gemfile" && \
