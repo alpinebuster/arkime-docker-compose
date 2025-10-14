@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "type": "esDown",
+    "value": "Invalid URL",
+    "text": " ES is down",
+    "title": "ES Down",
+    "severity": "red",
+    "clusterId": "a24530eb-2d93-4a7e-b400-8ae15928dc18",
+    "cluster": "default",
+    "message": " ES is down: Invalid URL",
+    "provisional": false,
+    "firstNoticed": 1760461093305,
+    "lastNoticed": 1760463694963
+  }
+]
