@@ -82,7 +82,7 @@ RUN \
 
 # Add scripts
 # NOTE: The current docker compose context is `project_root_dir/`
-COPY ./parsers ${ARKIME_INSTALL_DIR}/etc/parsers
+COPY ./parsers ${ARKIME_INSTALL_DIR}/parsers/
 COPY ./etc ${ARKIME_INSTALL_DIR}/etc/
 COPY ./scripts ${ARKIME_APP_DIR}/
 RUN chmod 755 ${ARKIME_APP_DIR}/*.sh
