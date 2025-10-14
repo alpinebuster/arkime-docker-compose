@@ -120,6 +120,7 @@ WORKDIR ${ARKIME_INSTALL_DIR}
 # Clean up deps to reduce image size
 RUN \
   rm -rf /arkime && \
+  rm -rf /ja4 && \
   # wget https://apt.llvm.org/llvm.sh && \
   # bash llvm.sh 18 && \
   # apt-get install -y ruby-dev && \
