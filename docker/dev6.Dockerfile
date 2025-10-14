@@ -70,10 +70,10 @@ ENV WISE $WISE
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  git clone https://github.com/arkime/arkime.git && \
+  git clone --single-branch https://github.com/arkime/arkime.git && \
   (cd arkime; git checkout $ARKIME_BRANCH; ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
-    ldd capture/capture && \
+    (cd /arkime; ldd capture/capture) && \
     export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
     (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
     # NOTE: create the etc/oui.txt, this is slow
@@ -96,7 +96,7 @@ ENV PATH="${ARKIME_INSTALL_DIR}/bin:${ARKIME_APP_DIR}:${PATH}"
 # Using a semicolon (;) allows multiple commands to be executed in sequence within the parentheses. All commands are executed in the same subshell, maintaining the dependencies between the commands.
 WORKDIR /arkime
 
-RUN (cd .. ; git clone https://github.com/alpinebuster/arkime-ja4.git ./ja4)
+RUN (cd .. ; git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/alpinebuster/arkime-ja4.git ./ja4)
 RUN cp ../ja4/ja4plus.c capture/plugins && \
     # `/arkime/capture/plugins/` 
     (cd capture/plugins; make) && \

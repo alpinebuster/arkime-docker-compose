@@ -60,8 +60,8 @@ if [ "$WIPE_DB" = "true" ]; then
     "${ARKIME_APP_DIR}/wipe_arkime.sh"
 fi
 
-echo "Look at log files for errors:"
-echo "  ./arkime/logs/*.log"
+echo "Look at log files at below for errors information:"
+echo "  /opt/arkime/logs/*.log"
 
 if [ "$CAPTURE" = "on" ]; then
     echo "Launching capture..."
@@ -89,7 +89,7 @@ fi
 if [ "$WISE" = "on" ]; then
     echo "Launching wise..."
     echo "Accessible via http://127.0.0.1:8081 or http://arkime-wise:8081."
-    node "$ARKIME_INSTALL_DIR"/wiseService/wiseService.js --config "$ARKIME_INSTALL_DIR/etc/wise.ini" | tee -a "$ARKIME_INSTALL_DIR"/logs/wise.log 2>&1 &
+    "$ARKIME_APP_DIR/docker.sh" wise --forever --config "$ARKIME_INSTALL_DIR/etc/wise.ini" | tee -a "$ARKIME_INSTALL_DIR"/logs/wise.log 2>&1 &
 fi
 
 if [ "$VIEWER" = "on" ]; then

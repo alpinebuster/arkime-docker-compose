@@ -115,7 +115,7 @@ services:
   arkime-setup:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker/dev6.Dockerfile
       args:
         - DOCKER_UBUNTU_VERSION=${DOCKER_UBUNTU_VERSION}
     pull_policy: never
