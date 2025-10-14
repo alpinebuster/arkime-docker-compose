@@ -3,6 +3,7 @@
         "arkime",
         "healthcheck",
         "localtime",
+        "netflow",
         "opensearch"
     ],
     "editor.fontSize": 13,

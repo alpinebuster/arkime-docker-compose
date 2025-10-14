@@ -77,11 +77,12 @@ RUN \
     export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
     (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
     # NOTE: create the etc/oui.txt, this is slow
-    # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'startarkime.sh'
+    # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'start_arkime.sh'
     "${ARKIME_INSTALL_DIR}/bin/arkime_update_geo.sh"
 
 # Add scripts
 # NOTE: The current docker compose context is `project_root_dir/`
+COPY ./parsers ${ARKIME_INSTALL_DIR}/etc/parsers
 COPY ./etc ${ARKIME_INSTALL_DIR}/etc/
 COPY ./scripts ${ARKIME_APP_DIR}/
 RUN chmod 755 ${ARKIME_APP_DIR}/*.sh
