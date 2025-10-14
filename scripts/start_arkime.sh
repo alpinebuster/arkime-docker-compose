@@ -88,7 +88,7 @@ fi
 
 if [ "$WISE" = "on" ]; then
     echo "Launching wise..."
-    echo "Accessible via http://127.0.0.1:8081 or http://arkime-wise:8081."
+    echo "Accessible via http://127.0.0.1:8081."
     "$ARKIME_APP_DIR/docker.sh" wise --forever --config "$ARKIME_INSTALL_DIR/etc/wise.ini" | tee -a "$ARKIME_INSTALL_DIR"/logs/wise.log 2>&1 &
 fi
 
