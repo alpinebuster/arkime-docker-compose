@@ -236,8 +236,6 @@ services:
         condition: service_started
       arkime-setup:
         condition: service_completed_successfully
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
     volumes:
       - ./etc:/opt/arkime/etc
       - ./logs/arkime:/etc/logrotate.d/arkime
