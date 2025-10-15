@@ -118,6 +118,7 @@ services:
       dockerfile: ./docker/dev6.Dockerfile
       args:
         - DOCKER_UBUNTU_VERSION=${DOCKER_UBUNTU_VERSION}
+        - PYTHON_VERSION=${PYTHON_VERSION}
     pull_policy: never
     image: zzz/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-setup

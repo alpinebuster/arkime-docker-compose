@@ -2,7 +2,9 @@ ARG DOCKER_UBUNTU_VERSION=24.04
 FROM ubuntu:${DOCKER_UBUNTU_VERSION}
 
 ARG ARKIME_BRANCH=dev6
+ARG PYTHON_VERSION=3.12
 ENV ARKIME_BRANCH $ARKIME_BRANCH
+ENV PYTHON_VERSION $PYTHON_VERSION
 
 LABEL org.opencontainers.image.authors="alpinebuster <imzqqq@hotmail.com>"
 LABEL org.opencontainers.image.source='https://github.com/alpinebuster/arkime-docker-compose'
@@ -74,7 +76,7 @@ RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
   git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/arkime/arkime.git && \
-  (cd arkime; ./easybutton-build.sh --nothirdparty --kafka --rminstall)
+  (cd arkime; PYTHON=${PYTHON_VERSION} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
     (cd /arkime; ldd capture/capture) && \
     export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \

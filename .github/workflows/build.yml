@@ -8,7 +8,7 @@ on:
   pull_request:
 
 env:
-  DOCKER_IMAGE: zzz/arkime
+  DOCKER_IMAGE: imzqqq/arkime
   DOCKER_UBUNTU_VERSION: "24.04"
 
 jobs:
