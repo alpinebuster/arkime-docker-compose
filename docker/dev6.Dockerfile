@@ -6,6 +6,7 @@ ENV ARKIME_BRANCH $ARKIME_BRANCH
 
 LABEL org.opencontainers.image.authors="alpinebuster <imzqqq@hotmail.com>"
 LABEL org.opencontainers.image.source='https://github.com/alpinebuster/arkime-docker-compose'
+LABEL org.opencontainers.image.description="DTA with Arkime 6 dev builds"
 LABEL org.opencontainers.image.licenses='AGPL-3.0-or-later'
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,7 +24,9 @@ RUN \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list && \
   apt-get update && \
-  apt-get install -y lsb-release build-essential make python3-pip git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd
+  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd \
+    procps iproute2 ethtool libyaml-dev libmaxminddb0 libcurl4 libpcap0.8 libglib2.0-0 libnghttp2-14 libyara10 librdkafka1 libpcre3 \
+    python3.12 python3.12-dev python3.12-venv libpython3.12 libpython3.12-stdlib python3-pip
 
 
 # Declare default `ARG`s
@@ -122,10 +125,6 @@ WORKDIR ${ARKIME_INSTALL_DIR}
 RUN \
   rm -rf /arkime && \
   rm -rf /ja4 && \
-  # wget https://apt.llvm.org/llvm.sh && \
-  # bash llvm.sh 18 && \
-  # apt-get install -y ruby-dev && \
-  # gem install --no-document fpm && \
   rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8005

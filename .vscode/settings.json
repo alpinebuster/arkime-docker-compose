@@ -4,7 +4,9 @@
         "healthcheck",
         "localtime",
         "netflow",
-        "opensearch"
+        "opensearch",
+        "pfring",
+        "spidata"
     ],
     "editor.fontSize": 13,
     "remote.autoForwardPorts": false

@@ -8,7 +8,8 @@ on:
   pull_request:
 
 env:
-  DOCKER_IMAGE: zzz/arkime:latest
+  DOCKER_IMAGE: zzz/arkime
+  DOCKER_UBUNTU_VERSION: "24.04"
 
 jobs:
   build:
@@ -23,8 +24,9 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=edge,branch=master
+            type=raw,value=latest,branches=main
             type=ref,event=tag
+            type=sha
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -43,5 +45,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: docker/dev6.Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
+          platforms: linux/amd64

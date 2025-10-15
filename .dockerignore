@@ -1,2 +1,10 @@
 etc/samples
 Gemfile.lock
+node_modules
+*.log
+*.pcap*
+*.zst
+*.zip
+*.tar
+*.tar.*
+./db
