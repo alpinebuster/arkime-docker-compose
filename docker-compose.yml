@@ -118,13 +118,14 @@ services:
       dockerfile: ./docker/dev6.Dockerfile
       args:
         - DOCKER_UBUNTU_VERSION=${DOCKER_UBUNTU_VERSION}
-        - PYTHON_VERSION=${PYTHON_VERSION}
+        - PYTHON=${PYTHON}
     pull_policy: never
     image: zzz/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-setup
     restart: on-failure:12
     env_file: ["./.env"]
     environment:
+      - PYTHON=${PYTHON}
       - ARKIME_VERSION=${ARKIME_VERSION}
       # NOTE: Set to true on first execution, then false subsequently
       - INITIALIZE_DB=true
@@ -162,6 +163,7 @@ services:
     restart: on-failure
     env_file: ["./.env"]
     environment:
+      - PYTHON=${PYTHON}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
@@ -206,6 +208,7 @@ services:
     restart: on-failure
     env_file: ["./.env"]
     environment:
+      - PYTHON=${PYTHON}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
@@ -254,6 +257,7 @@ services:
     restart: on-failure
     env_file: ["./.env"]
     environment:
+      - PYTHON=${PYTHON}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
@@ -299,6 +303,7 @@ services:
     restart: on-failure
     env_file: ["./.env"]
     environment:
+      - PYTHON=${PYTHON}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
@@ -344,6 +349,7 @@ services:
     restart: on-failure
     env_file: ["./.env"]
     environment:
+      - PYTHON=${PYTHON}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
