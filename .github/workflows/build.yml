@@ -9,7 +9,7 @@ on:
 
 env:
   DOCKER_IMAGE: imzqqq/arkime
-  DOCKER_IMAGE_GHCR: ghcr.io/NAMESPACE/arkime
+  DOCKER_IMAGE_GHCR: ghcr.io/alpinebuster/arkime
   DOCKER_UBUNTU_VERSION: "24.04"
 
 jobs:
