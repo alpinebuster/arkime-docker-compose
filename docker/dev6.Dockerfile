@@ -75,7 +75,7 @@ ENV WISE $WISE
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/alpinebuster/arkime.git && \
+  git clone -b ${ARKIME_BRANCH} https://github.com/alpinebuster/arkime.git && \
   (cd arkime; PYTHON=${PYTHON} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
     (cd /arkime; ldd capture/capture) && \
