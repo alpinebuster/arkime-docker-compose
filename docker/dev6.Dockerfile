@@ -2,7 +2,7 @@ ARG DOCKER_UBUNTU_VERSION=24.04
 FROM ubuntu:${DOCKER_UBUNTU_VERSION}
 
 ARG ARKIME_BRANCH=dev6
-ARG PYTHON=python3.12
+ARG PYTHON=python3.13
 ENV ARKIME_BRANCH $ARKIME_BRANCH
 ENV PYTHON $PYTHON
 
@@ -19,16 +19,17 @@ RUN \
   sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
   sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
   apt-get update && \
-  apt-get install -y --no-install-recommends ca-certificates openssl && \
+  apt-get install -y --no-install-recommends ca-certificates openssl software-properties-common && \
   release=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) && \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release} main restricted universe multiverse" >> /etc/apt/sources.list && \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+  add-apt-repository -y ppa:deadsnakes/ppa && \
   apt-get update && \
   apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd \
     procps iproute2 ethtool libyaml-dev libmaxminddb0 libcurl4 libpcap0.8 libglib2.0-0 libnghttp2-14 libyara10 librdkafka1 libpcre3 \
-    python3.12 python3.12-dev python3.12-venv libpython3.12 libpython3.12-stdlib python3-pip
+    python3.13 python3.13-dev python3.13-venv libpython3.13 libpython3.13-stdlib python3-pip
 
 
 # Declare default `ARG`s
@@ -74,11 +75,13 @@ ENV WISE $WISE
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/arkime/arkime.git && \
-  (cd arkime; env PYTHON=${PYTHON} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
+  git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/alpinebuster/arkime.git && \
+  (cd arkime; PYTHON=${PYTHON} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
     (cd /arkime; ldd capture/capture) && \
     export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
+    # Needed by `git describe --tags` when running `npm run bundle` command
+    git config --global --add safe.directory /arkime && \
     (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
     # NOTE: create the etc/oui.txt, this is slow
     # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'start_arkime.sh'

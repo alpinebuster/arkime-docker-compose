@@ -12,7 +12,7 @@
 # 3rd) The section titled "default" is used last.
 
 [default]
-# Comma seperated list of OpenSearch/Elasticsearch host:port combinations. If not using a
+# Comma separated list of OpenSearch/Elasticsearch host:port combinations. If not using a
 # Elasticsearch load balancer, a different OpenSearch/Elasticsearch node in the cluster can be 
 # specified for each Arkime node to help spread load on high volume clusters. For user/password
 # use https://user:pass@host:port OR elasticsearchBasicAuth
@@ -58,7 +58,7 @@ passwordSecret=ARKIME_PASSWORD
 # will make all previously stored passwords no longer work
 httpRealm=Moloch
 
-# Semicolon ';' seperated list of interfaces to listen on for traffic
+# Semicolon ';' separated list of interfaces to listen on for traffic
 interface=ARKIME_INTERFACE
 
 # Host to connect to for wiseService
@@ -192,22 +192,22 @@ maxReqBody=64
 # Only store request bodies that Utf-8?
 config.reqBodyOnlyUtf8=true
 
-# Semicolon ';' seperated list of SMTP Headers that have ips, need to have the terminating colon ':'
+# Semicolon ';' separated list of SMTP Headers that have ips, need to have the terminating colon ':'
 smtpIpHeaders=X-Originating-IP:;X-Barracuda-Apparent-Source-IP:
 
-# Semicolon ';' seperated list of directories to load parsers from
+# Semicolon ';' separated list of directories to load parsers from
 parsersDir=ARKIME_INSTALL_DIR/parsers
 
-# Semicolon ';' seperated list of directories to load plugins from
+# Semicolon ';' separated list of directories to load plugins from
 pluginsDir=ARKIME_INSTALL_DIR/plugins
 
-# Semicolon ';' seperated list of plugins to load and the order to load in
+# Semicolon ';' separated list of plugins to load and the order to load in
 # plugins=tagger.so; netflow.so
 
 # Plugins to load as root, usually just readers
 #rootPlugins=reader-pfring; reader-daq.so
 
-# Semicolon ';' seperated list of viewer plugins to load and the order to load in
+# Semicolon ';' separated list of viewer plugins to load and the order to load in
 # viewerPlugins=wise.js
 
 # NetFlowPlugin
@@ -217,7 +217,7 @@ pluginsDir=ARKIME_INSTALL_DIR/plugins
 #netflowSNMPOutput=2
 # Netflow version 1,5,7 supported, 7 by default
 #netflowVersion=1
-# Semicolon ';' seperated list of netflow destinations
+# Semicolon ';' separated list of netflow destinations
 #netflowDestinations=localhost:9993
 
 # Specify the max number of indices we calculate spidata for.
@@ -241,7 +241,7 @@ spiDataMaxIndices=4
 # Number of threads processing packets
 packetThreads=2
 
-# ADVANCED - Semicolon ';' seperated list of files to load for config. Files are loaded
+# ADVANCED - Semicolon ';' separated list of files to load for config. Files are loaded
 # in order and can replace values set in this file or previous files.
 #includes=
 
