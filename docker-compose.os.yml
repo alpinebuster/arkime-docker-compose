@@ -103,7 +103,7 @@ services:
     expose:
       - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
     environment:
-      - OPENSEARCH_HOSTS=["https://arkime_es_os-main:9200","https://arkime_es_os-1:9200"] # Define the OpenSearch nodes that OpenSearch Dashboards will query
+      - 'OPENSEARCH_HOSTS=["http://arkime_es_os-main:9200","http://arkime_es_os-1:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
       - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
     networks:
       - arkime_es_os
