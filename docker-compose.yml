@@ -2,7 +2,7 @@
 # Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
 # Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
 # 
-# `sudo chown -R 1000:1000 ./db/main ./db/node-1`
+# `sudo chown -R 1000:1000 ./db/main/* ./db/node-1/*`
 # `source .env`
 # 
 # `docker compose build --progress=plain --no-cache=true`, `docker compose --profile optional build --progress=plain --no-cache=true arkime-docs`
@@ -39,7 +39,7 @@ services:
       - arkime_es_os
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
-      - ./db/main:/usr/share/elasticsearch/data
+      - ./db/main/es:/usr/share/elasticsearch/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     healthcheck:
@@ -76,7 +76,7 @@ services:
       - arkime_es_os
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
-      - ./db/node-1:/usr/share/elasticsearch/data
+      - ./db/node-1/es:/usr/share/elasticsearch/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     healthcheck:
