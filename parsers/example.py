@@ -3,6 +3,8 @@ import arkime_session
 import arkime_packet
 import sys
 
+print("\nPython Arkime Module - Example\n")
+
 def my_parsers_cb(session, bytes, len, which):
     # Write code here to parse the bytes and extract information
     print("PARSER:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "len", len, "which", which)
@@ -22,6 +24,7 @@ def my_classify_callback(session, bytes, len, which):
     # Do some kind of check to see if you want to classify this session, if so register
     arkime_session.register_parser(session, my_parsers_cb)
 
+
 def my_pre_save_callback(session, final):
     print("PRE SAVE:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "final", final)
 
@@ -39,10 +42,13 @@ def my_ethernet_cb(batch, packet, bytes, len):
 ### Start ###
 # Register a classifier. This example will match all TCP sessions
 arkime.register_tcp_classifier("test", 0, bytes("", "ascii"), my_classify_callback)
+arkime.register_tcp_classifier("test_http", 0, b"HTTP", my_classify_callback)
+arkime.register_tcp_classifier("test_tls", 0, bytes("\x16\x03", "ascii"), my_classify_callback)
 arkime.register_pre_save(my_pre_save_callback)
 arkime.register_save(my_save_callback)
 
-arkime_packet.set_ethernet_cb(0xff12, my_ethernet_cb)
+# EtherType: 0x0800 (IPv4) or 0x86DD (IPv6)
+arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
 
 # Create a new field in the session we will be setting
 pos = arkime.field_define("arkime_rulz", "kind:lotermfield;db:arkime_rulz")

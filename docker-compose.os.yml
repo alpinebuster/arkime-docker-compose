@@ -10,6 +10,7 @@
 # `docker compose -f docker-compose.os.yml build --progress=plain --no-cache=true`, `docker compose -f docker-compose.os.yml --profile optional build --progress=plain --no-cache=true arkime-docs`
 # `docker compose -f docker-compose.os.yml up -d`
 # `docker compose -f docker-compose.os.yml down`
+# `docker compose -f docker-compose.os.yml restart arkime-capture`
 # 
 services:
   arkime_es_os-main:
@@ -238,6 +239,7 @@ services:
       arkime-setup:
         condition: service_completed_successfully
     volumes:
+      - ./parsers/example.py:/opt/arkime/parsers/example.py
       - ./etc:/opt/arkime/etc
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
