@@ -1,3 +1,5 @@
+#
+# REF: `https://docs.opensearch.org/latest/install-and-configure/install-opensearch/docker/`
 # NOTE: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]; for more information see [https://www.elastic.co/guide/en/elasticsearch/reference/8.17/bootstrap-checks-max-map-count.html]
 # Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
 # Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
@@ -5,41 +7,48 @@
 # `sudo chown -R 1000:1000 ./db/main ./db/node-1`
 # `source .env`
 # 
-# `docker compose build --progress=plain --no-cache=true`, `docker compose --profile optional build --progress=plain --no-cache=true arkime-docs`
-# `docker compose up -d`
-# `docker compose down`
+# `docker compose -f docker-compose.os.yml build --progress=plain --no-cache=true`, `docker compose -f docker-compose.os.yml --profile optional build --progress=plain --no-cache=true arkime-docs`
+# `docker compose -f docker-compose.os.yml up -d`
+# `docker compose -f docker-compose.os.yml down`
 # 
 services:
   arkime_es_os-main:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_STACK_VERSION}
+    image: opensearchproject/opensearch:$OS_STACK_VERSION
     container_name: arkime_es_os-main
     restart: unless-stopped
     ports:
       # NOTE: this affects containers which using host mode
-      - 19200:9200
+      - 19200:9200 # REST API
+      - 19600:9600 # Performance Analyzer
     env_file: ["./.env"]
     environment:
-      - node.name=${ES_OS_MAIN_NODE}
-      - cluster.name=${CLUSTER_NAME}
-      - cluster.initial_master_nodes=${ES_OS_MAIN_NODE},arkime_es_os-1
-      - discovery.seed_hosts=arkime_es_os-1
-      - ELASTIC_USERNAME=${ES_OS_USERNAME}
-      - ELASTIC_PASSWORD=${ES_OS_PASSWORD}
-      # TODO
-      - xpack.security.enabled=false
-      # - bootstrap.memory_lock=true
-      # - xpack.ml.use_auto_machine_memory_percent=true
-      - "ES_JAVA_OPTS=-Xms$ES_OS_JAVA_MEM -Xmx$ES_OS_JAVA_MEM"
-    # mem_limit: ${MEM_LIMIT}
-    # ulimits:
-    #   memlock:
-    #     soft: -1
-    #     hard: -1
+      - node.name=${ES_OS_MAIN_NODE} # Name the node that will run in this container
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms$ES_OS_JAVA_MEM -Xmx$ES_OS_JAVA_MEM" # Set min and max JVM heap sizes to at least 50% of system RAM
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # Disables Security plugin
+      # - OPENSEARCH_USERNAME=${ES_OS_USERNAME}
+      # - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ES_OS_PASSWORD}
+
+      # comment this if an OS cluster should be created
+      # - discovery.type=single-node
+
+      # uncomment this if an OS cluster should be created
+      # also add other OS node containers to this compose file
+      - cluster.name=${CLUSTER_NAME}  # Name the cluster
+      - discovery.seed_hosts=${ES_OS_MAIN_NODE},arkime_es_os-1 # Nodes to look for when discovering the cluster
+      - cluster.initial_cluster_manager_nodes=${ES_OS_MAIN_NODE},arkime_es_os-1 # Nodes eligibile to serve as cluster manager
+    ulimits:
+      nofile:
+        soft: 65535 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65535
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
     networks:
-      - arkime_es_os
+      - arkime_es_os # All of the containers will join the same Docker bridge network
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
-      - ./db/main:/usr/share/elasticsearch/data
+      - os01_data:/usr/share/opensearch/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     healthcheck:
@@ -48,69 +57,56 @@ services:
       timeout: 30s
       retries: 12
 
+  # uncomment to add another OS node container and create a cluster
+  # additional some modifications to the "environment" section of the arkime_es_os-main container must be made
   arkime_es_os-1:
     depends_on:
       - arkime_es_os-main
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_STACK_VERSION}
+    image: opensearchproject/opensearch:$OS_STACK_VERSION
     container_name: arkime_es_os-1
     restart: unless-stopped
     env_file: ["./.env"]
     environment:
       - node.name=arkime_es_os-1
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms$ES_OS_JAVA_MEM -Xmx$ES_OS_JAVA_MEM"
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      # - OPENSEARCH_USERNAME=${ES_OS_USERNAME}
+      # - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${ES_OS_PASSWORD}
+
+      # cluster settings
       - cluster.name=${CLUSTER_NAME}
-      - cluster.initial_master_nodes=${ES_OS_MAIN_NODE},arkime_es_os-1
-      - discovery.seed_hosts=${ES_OS_MAIN_NODE}
-      - ELASTIC_USERNAME=${ES_OS_USERNAME}
-      - ELASTIC_PASSWORD=${ES_OS_PASSWORD}
-      # TODO
-      - xpack.security.enabled=false
-      # - bootstrap.memory_lock=true
-      # - xpack.ml.use_auto_machine_memory_percent=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    # mem_limit: ${MEM_LIMIT}
-    # ulimits:
-    #   memlock:
-    #     soft: -1
-    #     hard: -1
+      - discovery.seed_hosts=${ES_OS_MAIN_NODE},arkime_es_os-1
+      - cluster.initial_cluster_manager_nodes=${ES_OS_MAIN_NODE},arkime_es_os-1
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+      memlock:
+        soft: -1
+        hard: -1
     networks:
       - arkime_es_os
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
-      - ./db/node-1:/usr/share/elasticsearch/data
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+      - os02_data:/usr/share/opensearch/data
     healthcheck:
-      test: [
-        "CMD-SHELL",
-        "curl --silent --fail -u ${ES_OS_USERNAME}:${ES_OS_PASSWORD} localhost:${ES_OS_PORT}/_cluster/health || exit 1",
-      ]
+      test: ["CMD-SHELL", "curl --silent --fail -u ${ES_OS_USERNAME}:${ES_OS_PASSWORD} localhost:${ES_OS_PORT}/_cluster/health || exit 1"]
       interval: 10s
       timeout: 30s
       retries: 12
-
-  arkime_kibana:
-    image: docker.elastic.co/kibana/kibana:${ES_STACK_VERSION}
-    container_name: arkime_kibana
-    restart: unless-stopped
-    env_file: ["./.env"]
-    environment:
-      - SERVERNAME=${KIBANA_USERNAME}
-      - ELASTICSEARCH_HOSTS=http://${ES_OS_HOST}:${ES_OS_PORT}
-      - ELASTIC_USERNAME=${ES_OS_USERNAME}
-      - ELASTIC_PASSWORD=${ES_OS_PASSWORD}
-      - ELASTICSEARCH_USERNAME=${KIBANA_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-    mem_limit: ${MEM_LIMIT}
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    container_name: opensearch-dashboards
     ports:
-      - 15601:5601
-    depends_on:
-      arkime_es_os-main:
-        condition: service_healthy
+      - 15601:5601 # Map host port 5601 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      - OPENSEARCH_HOSTS=["https://arkime_es_os-main:9200","https://arkime_es_os-1:9200"] # Define the OpenSearch nodes that OpenSearch Dashboards will query
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
     networks:
       - arkime_es_os
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
 
   arkime-setup:
     build:
@@ -406,6 +402,9 @@ services:
 volumes:
   certs:
     driver: local
+  os01_data:
+  # add a volume foreach OS node container
+  os02_data:
 
 networks:
   arkime_es_os:

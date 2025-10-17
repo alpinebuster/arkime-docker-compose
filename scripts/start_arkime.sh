@@ -67,7 +67,7 @@ if [ "$CAPTURE" = "on" ]; then
     echo "Launching capture..."
     # Ensure "$ARKIME_INSTALL_DIR/raw" directory is writable for user 'nobody' (used by the capture process)
     chmod -R 777 "$ARKIME_INSTALL_DIR/raw"
-    "$ARKIME_APP_DIR/docker.sh" capture --forever --config "$ARKIME_INSTALL_DIR/etc/config.ini" | tee -a "$ARKIME_INSTALL_DIR/logs/capture.log" 2>&1 &
+    "$ARKIME_APP_DIR/docker.sh" capture --forever --host $ARKIME_HOSTNAME --config "$ARKIME_INSTALL_DIR/etc/config.ini" | tee -a "$ARKIME_INSTALL_DIR/logs/capture.log" 2>&1 &
 fi
 
 if [ "$CONT3XT" = "on" ]; then

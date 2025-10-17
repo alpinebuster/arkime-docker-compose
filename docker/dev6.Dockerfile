@@ -27,7 +27,7 @@ RUN \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list && \
   add-apt-repository -y ppa:deadsnakes/ppa && \
   apt-get update && \
-  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd \
+  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd logrotate \
     procps iproute2 ethtool libyaml-dev libmaxminddb0 libcurl4 libpcap0.8 libglib2.0-0 libnghttp2-14 libyara10 librdkafka1 libpcre3 \
     python3.13 python3.13-dev python3.13-venv libpython3.13 libpython3.13-stdlib python3-pip
 

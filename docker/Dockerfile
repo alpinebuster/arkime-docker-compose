@@ -23,7 +23,7 @@ RUN \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
   echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list && \
   apt-get update && \
-  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata apt-utils software-properties-common gnupg zstd && \
+  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata apt-utils software-properties-common gnupg zstd logrotate && \
   (cd /tmp && wget https://packages.ntop.org/apt-stable/22.04/all/apt-ntop-stable.deb && apt install -y ./apt-ntop-stable.deb) && \
   # NOTE: must install `pfring` after `ntopng`
   apt-get update && \
