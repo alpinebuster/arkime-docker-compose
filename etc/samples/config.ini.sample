@@ -56,7 +56,7 @@ passwordSecret=ARKIME_PASSWORD
 
 # HTTP Digest Realm - Must be in default section. Changing the value
 # will make all previously stored passwords no longer work
-httpRealm=Moloch
+httpRealm=Arkime
 
 # Semicolon ';' separated list of interfaces to listen on for traffic
 interface=ARKIME_INTERFACE

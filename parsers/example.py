@@ -5,6 +5,7 @@ import sys
 
 print("\nPython Arkime Module - Example\n")
 
+
 def my_parsers_cb(session, bytes, len, which):
     # Write code here to parse the bytes and extract information
     print("PARSER:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "len", len, "which", which)
@@ -14,7 +15,6 @@ def my_parsers_cb(session, bytes, len, which):
 
     # A parser should return -1 to unregister itself, 0 to continue parsing
     return 0
-
 def my_classify_callback(session, bytes, len, which):
     print("CLASSIFY:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "len", len, "which", which)
 
@@ -42,8 +42,7 @@ def my_ethernet_cb(batch, packet, bytes, len):
 ### Start ###
 # Register a classifier. This example will match all TCP sessions
 arkime.register_tcp_classifier("test", 0, bytes("", "ascii"), my_classify_callback)
-arkime.register_tcp_classifier("test_http", 0, b"HTTP", my_classify_callback)
-arkime.register_tcp_classifier("test_tls", 0, bytes("\x16\x03", "ascii"), my_classify_callback)
+
 arkime.register_pre_save(my_pre_save_callback)
 arkime.register_save(my_save_callback)
 
