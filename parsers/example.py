@@ -37,6 +37,16 @@ def my_ethernet_cb(batch, packet, bytes, len):
     # Remove first 18 bytes of ethernet header and run ethernet callback again
     bytes = bytes[18:]
     return arkime_packet.run_ethernet_cb(batch, packet, bytes, 0, "example")
+# def my_ip_cb(batch, packet, bytes, len):
+def my_ip_cb(*args):
+    print("my_ip_cb args:", args)
+    # src = arkime_packet.get(packet, "ip.src")
+    # dst = arkime_packet.get(packet, "ip.dst")
+    # print("IP_CB:", src, "->", dst, "len", len)
+
+    # arkime_session.add_tag(packet, "python_ip")
+    # return arkime_packet.run_ethernet_cb(batch, packet, bytes, 0, "example")
+    return 0
 
 
 ### Start ###
@@ -48,6 +58,10 @@ arkime.register_save(my_save_callback)
 
 # EtherType: 0x0800 (IPv4) or 0x86DD (IPv6)
 arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
+# 1 = ICMP
+# 6 = TCP
+# 17 = UDP
+arkime_packet.set_ip_cb(6, my_ip_cb)
 
 # Create a new field in the session we will be setting
 pos = arkime.field_define("arkime_rulz", "kind:lotermfield;db:arkime_rulz")
