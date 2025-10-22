@@ -7,7 +7,7 @@
 # `sudo chown -R 1000:1000 ./db`
 # `source .env`
 # 
-# `docker compose --progress=plain --no-cache=true -f docker-compose.os.yml build`, `docker compose --progress=plain --no-cache=true -f docker-compose.os.yml --profile optional build arkime-docs`
+# `docker compose --progress=plain -f docker-compose.os.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.os.yml --profile optional build arkime-docs --no-cache=true`
 # `docker compose -f docker-compose.os.yml up -d`
 # `docker compose -f docker-compose.os.yml down`
 # `docker compose -f docker-compose.os.yml restart arkime-capture`
@@ -195,6 +195,8 @@ services:
     env_file: ["./.env"]
     environment:
       - PYTHON=${PYTHON}
+      - ARKIME_HOST=${ARKIME_HOST}
+      - ARKIME_NODENAME=${ARKIME_NODENAME}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
@@ -241,7 +243,8 @@ services:
     env_file: ["./.env"]
     environment:
       - PYTHON=${PYTHON}
-      - ARKIME_HOST=${ARKIME_HOSTNAME}
+      - ARKIME_HOST=${ARKIME_HOST}
+      - ARKIME_NODENAME=${ARKIME_NODENAME}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
