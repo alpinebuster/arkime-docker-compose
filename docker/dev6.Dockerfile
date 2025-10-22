@@ -78,14 +78,18 @@ RUN \
   git clone -b ${ARKIME_BRANCH} https://github.com/alpinebuster/arkime.git && \
   (cd arkime; PYTHON=${PYTHON} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
-    (cd /arkime; ldd capture/capture) && \
-    export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
-    # Needed by `git describe --tags` when running `npm run bundle` command
-    git config --global --add safe.directory /arkime && \
-    (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
-    # NOTE: create the etc/oui.txt, this is slow
-    # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'start_arkime.sh'
-    "${ARKIME_INSTALL_DIR}/bin/arkime_update_geo.sh"
+  (cd /arkime; ldd capture/capture) && \
+  export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
+  # Needed by `git describe --tags` when running `npm run bundle` command
+  git config --global --add safe.directory /arkime && \
+  (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
+  # NOTE: create the etc/oui.txt, this is slow
+  # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'start_arkime.sh'
+  "${ARKIME_INSTALL_DIR}/bin/arkime_update_geo.sh"
+RUN \
+  wget -nv -P ${ARKIME_INSTALL_DIR}/etc/ https://raw.githubusercontent.com/arkime/arkime-test-data/main/GeoLite2-Country.mmdb && \
+  wget -nv -P ${ARKIME_INSTALL_DIR}/etc/ https://raw.githubusercontent.com/arkime/arkime-test-data/main/GeoLite2-ASN.mmdb
+
 
 # Add scripts
 # NOTE: The current docker compose context is `project_root_dir/`

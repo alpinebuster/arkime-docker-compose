@@ -5,7 +5,7 @@
 # `sudo chown -R 1000:1000 ./db/main/* ./db/node-1/*`
 # `source .env`
 # 
-# `docker compose build --progress=plain --no-cache=true`, `docker compose --profile optional build --progress=plain --no-cache=true arkime-docs`
+# `docker compose --progress=plain --no-cache=true build`, `docker compose --progress=plain --no-cache=true --profile optional build arkime-docs`
 # `docker compose up -d`
 # `docker compose down`
 # 
@@ -191,7 +191,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/viewer.ini:/opt/arkime/etc/viewer.ini
+      - ./etc/viewer.env:/opt/arkime/etc/viewer.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -242,7 +243,9 @@ services:
       arkime-setup:
         condition: service_completed_successfully
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./parsers/example.py:/opt/arkime/parsers/example.py
+      - ./etc/capture.ini:/opt/arkime/etc/capture.ini
+      - ./etc/capture.env:/opt/arkime/etc/capture.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -288,7 +291,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/parliament.ini:/opt/arkime/etc/parliament.ini
+      - ./etc/parliament.env:/opt/arkime/etc/parliament.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -334,7 +338,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/wise.ini:/opt/arkime/etc/wise.ini
+      - ./etc/wise.env:/opt/arkime/etc/wise.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -380,7 +385,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/cont3xt.ini:/opt/arkime/etc/cont3xt.ini
+      - ./etc/cont3xt.env:/opt/arkime/etc/cont3xt.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw

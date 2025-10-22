@@ -7,12 +7,46 @@
 # `sudo chown -R 1000:1000 ./db`
 # `source .env`
 # 
-# `docker compose -f docker-compose.os.yml build --progress=plain --no-cache=true`, `docker compose -f docker-compose.os.yml --profile optional build --progress=plain --no-cache=true arkime-docs`
+# `docker compose --progress=plain --no-cache=true -f docker-compose.os.yml build`, `docker compose --progress=plain --no-cache=true -f docker-compose.os.yml --profile optional build arkime-docs`
 # `docker compose -f docker-compose.os.yml up -d`
 # `docker compose -f docker-compose.os.yml down`
 # `docker compose -f docker-compose.os.yml restart arkime-capture`
 # 
 services:
+  test-os:
+    image: opensearchproject/opensearch:$OS_STACK_VERSION
+    container_name: test-os
+    restart: unless-stopped
+    ports:
+      - 9200:9200 # REST API
+      - 9600:9600 # Performance Analyzer
+    env_file: ["./.env"]
+    environment:
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms$ES_OS_JAVA_MEM -Xmx$ES_OS_JAVA_MEM"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+      - discovery.type=single-node
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - arkime_es_os
+    volumes:
+      - os_testdata:/usr/share/opensearch/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail -u ${ES_OS_USERNAME}:${ES_OS_PASSWORD} localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+    profiles: ["optional"]
+
   arkime_es_os-main:
     image: opensearchproject/opensearch:$OS_STACK_VERSION
     container_name: arkime_es_os-main
@@ -188,7 +222,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/viewer.ini:/opt/arkime/etc/viewer.ini
+      - ./etc/viewer.env:/opt/arkime/etc/viewer.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -240,7 +275,8 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./parsers/example.py:/opt/arkime/parsers/example.py
-      - ./etc:/opt/arkime/etc
+      - ./etc/config.ini:/opt/arkime/etc/config.ini
+      - ./etc/capture.env:/opt/arkime/etc/capture.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -286,7 +322,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/parliament.ini:/opt/arkime/etc/parliament.ini
+      - ./etc/parliament.env:/opt/arkime/etc/parliament.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -332,7 +369,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/wise.ini:/opt/arkime/etc/wise.ini
+      - ./etc/wise.env:/opt/arkime/etc/wise.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -378,7 +416,8 @@ services:
     networks:
       - arkime_es_os
     volumes:
-      - ./etc:/opt/arkime/etc
+      - ./etc/cont3xt.ini:/opt/arkime/etc/cont3xt.ini
+      - ./etc/cont3xt.env:/opt/arkime/etc/cont3xt.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
       - ./raw:/opt/arkime/raw
@@ -404,6 +443,7 @@ services:
 volumes:
   certs:
     driver: local
+  os_testdata:
   os01_data:
     driver: local
     driver_opts:
