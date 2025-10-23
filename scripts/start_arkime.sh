@@ -66,7 +66,7 @@ echo "  /opt/arkime/logs/*.log"
 if [ "$CAPTURE" = "on" ]; then
     echo "Launching capture..."
     # Ensure "$ARKIME_INSTALL_DIR/raw" directory is writable for user 'nobody' (used by the capture process)
-    chmod -R 757 "$ARKIME_INSTALL_DIR/raw"
+    chmod -R 777 "$ARKIME_INSTALL_DIR/raw"
     "$ARKIME_APP_DIR/docker.sh" capture --forever --host $ARKIME_HOST -n $ARKIME_NODENAME --config "$ARKIME_INSTALL_DIR/etc/config.ini" | tee -a "$ARKIME_INSTALL_DIR/logs/capture.log" 2>&1 &
 fi
 
