@@ -66,8 +66,16 @@ echo "  /opt/arkime/logs/*.log"
 if [ "$CAPTURE" = "on" ]; then
     echo "Launching capture..."
     # Ensure "$ARKIME_INSTALL_DIR/raw" directory is writable for user 'nobody' (used by the capture process)
-    chmod -R 777 "$ARKIME_INSTALL_DIR/raw"
-    "$ARKIME_APP_DIR/docker.sh" capture --forever -n $ARKIME_NODENAME --config "$ARKIME_INSTALL_DIR/etc/config.ini" | tee -a "$ARKIME_INSTALL_DIR/logs/capture.log" 2>&1 &
+    chmod -R 757 "$ARKIME_INSTALL_DIR/raw"
+    "$ARKIME_APP_DIR/docker.sh" capture --forever --host $ARKIME_HOST -n $ARKIME_NODENAME --config "$ARKIME_INSTALL_DIR/etc/config.ini" | tee -a "$ARKIME_INSTALL_DIR/logs/capture.log" 2>&1 &
+fi
+
+if [ "$VIEWER" = "on" ]; then
+    echo "Launching viewer..."
+    echo "Visit http://127.0.0.1:8005 with your favorite browser."
+    echo "  User    : $ARKIME_USERNAME"
+    echo "  Password: $ARKIME_PASSWORD"
+    "$ARKIME_APP_DIR/docker.sh" viewer --forever --host $ARKIME_HOST_VIEWER -n $ARKIME_NODENAME_VIEWER --config "$ARKIME_INSTALL_DIR/etc/viewer.ini" | tee -a "$ARKIME_INSTALL_DIR/logs/viewer.log" 2>&1 &
 fi
 
 if [ "$CONT3XT" = "on" ]; then
@@ -90,14 +98,6 @@ if [ "$WISE" = "on" ]; then
     echo "Launching wise..."
     echo "Accessible via http://127.0.0.1:8081."
     "$ARKIME_APP_DIR/docker.sh" wise --forever --config "$ARKIME_INSTALL_DIR/etc/wise.ini" | tee -a "$ARKIME_INSTALL_DIR"/logs/wise.log 2>&1 &
-fi
-
-if [ "$VIEWER" = "on" ]; then
-    echo "Launching viewer..."
-    echo "Visit http://127.0.0.1:8005 with your favorite browser."
-    echo "  User    : $ARKIME_USERNAME"
-    echo "  Password: $ARKIME_PASSWORD"
-    "$ARKIME_APP_DIR/docker.sh" viewer --forever -n $ARKIME_NODENAME --config "$ARKIME_INSTALL_DIR/etc/viewer.ini" | tee -a "$ARKIME_INSTALL_DIR/logs/viewer.log" 2>&1 &
 fi
 
 wait

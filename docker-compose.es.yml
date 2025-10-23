@@ -1,0 +1,123 @@
+# NOTE: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]; for more information see [https://www.elastic.co/guide/en/elasticsearch/reference/8.17/bootstrap-checks-max-map-count.html]
+# Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
+# Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
+# 
+# `sudo chown -R 1000:1000 ./db/main/* ./db/node-1/*`
+# `source .env`
+# 
+# `docker compose --progress=plain build --no-cache=true`, `docker compose --progress=plain --profile optional build arkime-docs --no-cache=true`
+# `docker compose up -d`
+# `docker compose down`
+# 
+services:
+  arkime_es_os-main:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_STACK_VERSION}
+    container_name: arkime_es_os-main
+    restart: unless-stopped
+    ports:
+      # NOTE: this affects containers which using host mode
+      - 19200:9200
+    env_file: ["./.env"]
+    environment:
+      - node.name=${ES_OS_MAIN_NODE}
+      - cluster.name=${CLUSTER_NAME}
+      - cluster.initial_master_nodes=${ES_OS_MAIN_NODE},arkime_es_os-1
+      - discovery.seed_hosts=arkime_es_os-1
+      - ELASTIC_USERNAME=${ES_OS_USERNAME}
+      - ELASTIC_PASSWORD=${ES_OS_PASSWORD}
+      # TODO
+      - xpack.security.enabled=false
+      # - bootstrap.memory_lock=true
+      # - xpack.ml.use_auto_machine_memory_percent=true
+      - "ES_JAVA_OPTS=-Xms$ES_OS_JAVA_MEM -Xmx$ES_OS_JAVA_MEM"
+    # mem_limit: ${MEM_LIMIT}
+    # ulimits:
+    #   memlock:
+    #     soft: -1
+    #     hard: -1
+    networks:
+      - arkime_es_os
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - ./db/main/es:/usr/share/elasticsearch/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail -u ${ES_OS_USERNAME}:${ES_OS_PASSWORD} localhost:${ES_OS_PORT}/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+
+  arkime_es_os-1:
+    depends_on:
+      - arkime_es_os-main
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_STACK_VERSION}
+    container_name: arkime_es_os-1
+    restart: unless-stopped
+    env_file: ["./.env"]
+    environment:
+      - node.name=arkime_es_os-1
+      - cluster.name=${CLUSTER_NAME}
+      - cluster.initial_master_nodes=${ES_OS_MAIN_NODE},arkime_es_os-1
+      - discovery.seed_hosts=${ES_OS_MAIN_NODE}
+      - ELASTIC_USERNAME=${ES_OS_USERNAME}
+      - ELASTIC_PASSWORD=${ES_OS_PASSWORD}
+      # TODO
+      - xpack.security.enabled=false
+      # - bootstrap.memory_lock=true
+      # - xpack.ml.use_auto_machine_memory_percent=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    # mem_limit: ${MEM_LIMIT}
+    # ulimits:
+    #   memlock:
+    #     soft: -1
+    #     hard: -1
+    networks:
+      - arkime_es_os
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - ./db/node-1/es:/usr/share/elasticsearch/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "curl --silent --fail -u ${ES_OS_USERNAME}:${ES_OS_PASSWORD} localhost:${ES_OS_PORT}/_cluster/health || exit 1",
+      ]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+
+  arkime_kibana:
+    image: docker.elastic.co/kibana/kibana:${ES_STACK_VERSION}
+    container_name: arkime_kibana
+    restart: unless-stopped
+    env_file: ["./.env"]
+    environment:
+      - SERVERNAME=${KIBANA_USERNAME}
+      - ELASTICSEARCH_HOSTS=http://${ES_OS_HOST}:${ES_OS_PORT}
+      - ELASTIC_USERNAME=${ES_OS_USERNAME}
+      - ELASTIC_PASSWORD=${ES_OS_PASSWORD}
+      - ELASTICSEARCH_USERNAME=${KIBANA_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+    mem_limit: ${MEM_LIMIT}
+    ports:
+      - 15601:5601
+    depends_on:
+      arkime_es_os-main:
+        condition: service_healthy
+    networks:
+      - arkime_es_os
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+volumes:
+  certs:
+    driver: local
+
+networks:
+  arkime_es_os:
+    driver: bridge
+    name: arkime_es_os

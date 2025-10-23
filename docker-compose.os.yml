@@ -4,7 +4,7 @@
 # Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
 # Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
 # 
-# `sudo chown -R 1000:1000 ./db`
+# `sudo chown -R 1000:1000 ./db`, `sudo rm -rf ./db/node-1/os/*`, `sudo rm -rf ./db/main/os/*` and delete `./etc/.initialized` file
 # `source .env`
 # 
 # `docker compose --progress=plain -f docker-compose.os.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.os.yml --profile optional build arkime-docs --no-cache=true`
@@ -142,6 +142,7 @@ services:
       - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
     networks:
       - arkime_es_os
+    profiles: ["optional"]
 
   arkime-setup:
     build:
@@ -168,6 +169,7 @@ services:
       - ARKIME_USERNAME=${ARKIME_USERNAME}
       - ARKIME_PASSWORD=${ARKIME_PASSWORD}
       - ARKIME_INSTALL_DIR=${ARKIME_INSTALL_DIR}
+      - ARKIME_PREFIX=${ARKIME_PREFIX}
       - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
       # - ARKIME__prefix=zzz
       - CAPTURE=off
@@ -185,53 +187,6 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-  arkime-viewer:
-    pull_policy: never
-    image: zzz/arkime:${ARKIME_RELEASE_TAG}
-    container_name: arkime-viewer
-    cap_add:
-      - NET_ADMIN
-    restart: on-failure
-    env_file: ["./.env"]
-    environment:
-      - PYTHON=${PYTHON}
-      - ARKIME_HOST=${ARKIME_HOST}
-      - ARKIME_NODENAME=${ARKIME_NODENAME}
-      - ARKIME_VERSION=${ARKIME_VERSION}
-      - INITIALIZE_DB=false
-      - WIPE_DB=false
-      - ES_OS_HOST=${ES_OS_HOST}
-      - ES_OS_PORT=${ES_OS_PORT}
-      - ES_OS_USERNAME=${ES_OS_USERNAME}
-      - ES_OS_PASSWORD=${ES_OS_PASSWORD}
-      - ARKIME_USERNAME=${ARKIME_USERNAME}
-      - ARKIME_PASSWORD=${ARKIME_PASSWORD}
-      - ARKIME_INSTALL_DIR=${ARKIME_INSTALL_DIR}
-      - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
-      - ARKIME__interface=${ARKIME__interface}
-      - CAPTURE=off
-      - VIEWER=on
-      - PARLIAMENT=off
-      - CONT3XT=off
-      - WISE=off
-    depends_on:
-      arkime_es_os-main:
-        condition: service_healthy
-      arkime-setup:
-        condition: service_completed_successfully
-    ports:
-      - 8005:8005
-    networks:
-      - arkime_es_os
-    volumes:
-      - ./etc/viewer.ini:/opt/arkime/etc/viewer.ini
-      - ./etc/viewer.env:/opt/arkime/etc/viewer.env
-      - ./logs/arkime:/etc/logrotate.d/arkime
-      - ./logs:/opt/arkime/logs
-      - ./raw:/opt/arkime/raw
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-
   arkime-capture:
     pull_policy: never
     image: zzz/arkime:${ARKIME_RELEASE_TAG}
@@ -245,6 +200,7 @@ services:
       - PYTHON=${PYTHON}
       - ARKIME_HOST=${ARKIME_HOST}
       - ARKIME_NODENAME=${ARKIME_NODENAME}
+      - ARKIME_NODENAME_VIEWER=${ARKIME_NODENAME_VIEWER}
       - ARKIME_VERSION=${ARKIME_VERSION}
       - INITIALIZE_DB=false
       - WIPE_DB=false
@@ -286,12 +242,56 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
+  arkime-viewer:
+    pull_policy: never
+    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    container_name: arkime-viewer
+    restart: on-failure
+    env_file: ["./.env"]
+    environment:
+      - PYTHON=${PYTHON}
+      - ARKIME_HOST_VIEWER=${ARKIME_HOST_VIEWER}
+      - ARKIME_NODENAME=${ARKIME_NODENAME}
+      - ARKIME_NODENAME_VIEWER=${ARKIME_NODENAME_VIEWER}
+      - ARKIME_VERSION=${ARKIME_VERSION}
+      - INITIALIZE_DB=false
+      - WIPE_DB=false
+      - ES_OS_HOST=${ES_OS_HOST}
+      - ES_OS_PORT=${ES_OS_PORT}
+      - ES_OS_USERNAME=${ES_OS_USERNAME}
+      - ES_OS_PASSWORD=${ES_OS_PASSWORD}
+      - ARKIME_USERNAME=${ARKIME_USERNAME}
+      - ARKIME_PASSWORD=${ARKIME_PASSWORD}
+      - ARKIME_INSTALL_DIR=${ARKIME_INSTALL_DIR}
+      - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
+      - ARKIME__interface=${ARKIME__interface}
+      - CAPTURE=off
+      - VIEWER=on
+      - PARLIAMENT=off
+      - CONT3XT=off
+      - WISE=off
+    depends_on:
+      arkime_es_os-main:
+        condition: service_healthy
+      arkime-setup:
+        condition: service_completed_successfully
+    ports:
+      - 8005:8005
+    networks:
+      - arkime_es_os
+    volumes:
+      - ./etc/viewer.ini:/opt/arkime/etc/viewer.ini
+      - ./etc/viewer.env:/opt/arkime/etc/viewer.env
+      - ./logs/arkime:/etc/logrotate.d/arkime
+      - ./logs:/opt/arkime/logs
+      - ./raw:/opt/arkime/raw
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
   arkime-parliament:
     pull_policy: never
     image: zzz/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-parliament
-    cap_add:
-      - NET_ADMIN
     restart: on-failure
     env_file: ["./.env"]
     environment:
@@ -337,8 +337,6 @@ services:
     pull_policy: never
     image: zzz/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-wise
-    cap_add:
-      - NET_ADMIN
     restart: on-failure
     env_file: ["./.env"]
     environment:
@@ -384,8 +382,6 @@ services:
     pull_policy: never
     image: zzz/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-cont3xt
-    cap_add:
-      - NET_ADMIN
     restart: on-failure
     env_file: ["./.env"]
     environment:

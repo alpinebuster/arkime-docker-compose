@@ -39,8 +39,11 @@ ARG ES_OS_HOST=es_os-main
 ARG ES_OS_PORT=9200
 ARG ES_OS_USERNAME=elastic
 ARG ES_OS_PASSWORD=elastic_pwd
+ARG ARKIME_PREFIX=arkime
 ARG ARKIME_HOST=localhost
+ARG ARKIME_HOST_VIEWER=localhost
 ARG ARKIME_NODENAME=arkime-capture
+ARG ARKIME_NODENAME_VIEWER=arkime-viewer
 ARG ARKIME_INTERFACE=enp6s0
 ARG ARKIME_USERNAME=arkime
 ARG ARKIME_PASSWORD=arkime_pwd
@@ -59,8 +62,11 @@ ENV ES_OS_HOST $ES_OS_HOST
 ENV ES_OS_PORT $ES_OS_PORT
 ENV ES_OS_USERNAME $ES_OS_USERNAME
 ENV ES_OS_PASSWORD $ES_OS_PASSWORD
+ENV ARKIME_PREFIX $ARKIME_PREFIX
 ENV ARKIME_HOST $ARKIME_HOST
+ENV ARKIME_HOST_VIEWER $ARKIME_HOST_VIEWER
 ENV ARKIME_NODENAME $ARKIME_NODENAME
+ENV ARKIME_NODENAME_VIEWER $ARKIME_NODENAME_VIEWER
 ENV ARKIME_INTERFACE $ARKIME_INTERFACE
 ENV ARKIME_USERNAME $ARKIME_USERNAME
 ENV ARKIME_PASSWORD $ARKIME_PASSWORD
@@ -110,15 +116,6 @@ RUN cp ../ja4/ja4plus.c capture/plugins && \
     (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
 RUN mv capture/plugins/ja4plus*.so ${ARKIME_INSTALL_DIR}/plugins/ && \
     rm -f capture/plugins/ja4plus.c
-
-
-RUN useradd -u 2000 opensearch; \
-(cd / ; \
- wget https://artifacts.opensearch.org/releases/core/opensearch/2.7.0/opensearch-min-2.7.0-linux-x64.tar.gz; \
- tar xf opensearch-min-2.7.0-linux-x64.tar.gz; \
- chown -R opensearch opensearch-2.7.0; \
- rm -f opensearch-min-2.7.0-linux-x64.tar.gz \
-);
 
 
 WORKDIR ${ARKIME_INSTALL_DIR}

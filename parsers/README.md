@@ -14,7 +14,7 @@ Create a `example.py` file at `/opt/arkime/parsers/` folder.
 ### nvidia-docker
 
 - `sudo fuser -v /dev/nvidia*`
-- `sudo nvidia-docker run -p 11050:11250 --name=zq_pytorch -v ~/workspace:/root/workspace -v /data:/root/data --shm-size 64g --device /dev/nvidiactl --device /dev/nvidia-uvm --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia2 --device /dev/nvidia3 -it hetao-pytorch /bin/bash`
+- `sudo nvidia-docker run -p 11050:11250 --name=pytorch_container_name -v ~/workspace:/root/workspace -v /data:/root/data --shm-size 64g --device /dev/nvidiactl --device /dev/nvidia-uvm --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia2 --device /dev/nvidia3 -it pytorch_image_name /bin/bash`
 
 **Installing on Ubuntu and Debian**
 
@@ -54,7 +54,7 @@ sudo nvidia-ctk runtime configure --runtime=docker
 Restart the Docker daemon to complete the installation after setting the default runtime:
 
 ```sh
-sudo systemctl restart docker
+sudo systemctl restart docker docker.socket
 ```
 
 At this point, a working setup can be tested by running a base CUDA container:
