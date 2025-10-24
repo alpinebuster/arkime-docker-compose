@@ -63,6 +63,7 @@ fi
 echo "Look at log files at below for errors information:"
 echo "  /opt/arkime/logs/*.log"
 
+# NOTE: The capture and viewer must use the same node name when on the same physical host. When using different containers for capture and viewer, you may need to add a `-n <nodename>` to both the capture and viewer commands.
 if [ "$CAPTURE" = "on" ]; then
     echo "Launching capture..."
     # Ensure "$ARKIME_INSTALL_DIR/raw" directory is writable for user 'nobody' (used by the capture process)
