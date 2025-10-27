@@ -3,6 +3,8 @@ import arkime_session
 import arkime_packet
 import sys
 
+# REF: `https://arkime.com/faq#life-of-a-packet`
+#      `https://arkime.com/python`
 print("\nPython Arkime Module - Example\n")
 
 # This callback is called for the every packet of a session in each direction where the callback has been registered using arkime_session.register_parser. Return -1 to unregister the parser for the session, 0 is normal case or positive value for the number of bytes consume if this protocol wraps others (rare).
@@ -111,7 +113,7 @@ arkime.register_save(my_save_callback)
 # #define	ETHER_MIN_LEN	(ETH_ZLEN + ETHER_CRC_LEN) /* min packet length */
 # #define	ETHER_MAX_LEN	(ETH_FRAME_LEN + ETHER_CRC_LEN) /* max packet length */
 #
-#arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
+arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
 
 # Register an IP protocol packet callback that will be called for packets of the given protocol.
 # 
