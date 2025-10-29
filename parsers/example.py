@@ -57,20 +57,20 @@ def my_save_callback(session, final):
 #  packetBytes: The memory view of the packet bytes; only valid during the callback.
 #  packetLen: The length of the packet.
 #
-def my_ethernet_cb(batch, packet, bytes, packetLen):
-    print("ETHERNET:", "batch", batch, "packet", "packet", "bytes", bytes, "len", packetLen, "pktlen", arkime_packet.get(packet, "pktlen"))
+def my_ethernet_cb(batch, packet, packetBytes, packetLen):
+    print("ETHERNET:", "batch", batch, "packet", "packet", "bytes", packetBytes, "len", packetLen, "pktlen", arkime_packet.get(packet, "pktlen"))
 
     # Remove first 18 bytes of ethernet header and run ethernet callback again
     # bytes = bytes[18:]
-    return arkime_packet.run_ethernet_cb(batch, packet, bytes, 0, "example")
+    return arkime_packet.run_ethernet_cb(batch, packet, packetBytes, 0, "example_eth")
 def my_ip_cb(batch, packet, packetBytes, packetLen):
-    print("my_ip_cb args:")
+    print("IP:", "batch", batch, "packet", "packet", "bytes", packetBytes, "len", packetLen, "pktlen", arkime_packet.get(packet, "pktlen"))
     # src = arkime_packet.get(packet, "ip.src")
     # dst = arkime_packet.get(packet, "ip.dst")
     # print("IP_CB:", src, "->", dst, "len", len)
 
     # arkime_session.add_tag(packet, "python_ip")
-    return arkime_packet.run_ip_cb(batch, packet, bytes, 0, "example")
+    return arkime_packet.run_ip_cb(batch, packet, packetBytes, 0, "example_ip")
 
 
 ### Start ###
@@ -84,7 +84,9 @@ def my_ip_cb(batch, packet, packetBytes, packetLen):
 # This example will match all TCP sessions
 #
 arkime.register_tcp_classifier("test", 0, bytes("", "ascii"), my_classify_callback)
+# saveCb: The callback to call when the session is going to be saved to the database but before some hosekeeping is done, such as running the save rules.
 arkime.register_pre_save(my_pre_save_callback)
+# saveCb: The callback to call when the session is being saved to the database.
 arkime.register_save(my_save_callback)
 
 # Register an ethertype packet callback that will be called for packets of the given type. Usually this callback with just need to strip some headers and call either run_ip_cb or run_ethernet_cb.
@@ -113,7 +115,7 @@ arkime.register_save(my_save_callback)
 # #define	ETHER_MIN_LEN	(ETH_ZLEN + ETHER_CRC_LEN) /* min packet length */
 # #define	ETHER_MAX_LEN	(ETH_FRAME_LEN + ETHER_CRC_LEN) /* max packet length */
 #
-arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
+#arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
 
 # Register an IP protocol packet callback that will be called for packets of the given protocol.
 # 
@@ -180,7 +182,8 @@ arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
 #     IPPROTO_MAX
 #   };
 # 
-arkime_packet.set_ip_cb(0, my_ip_cb)
+# FIXME
+#arkime_packet.set_ip_cb(0x06, my_ip_cb)
 
 # Create a new field in the session we will be setting
 pos = arkime.field_define("arkime_rulz", "kind:lotermfield;db:arkime_rulz")
