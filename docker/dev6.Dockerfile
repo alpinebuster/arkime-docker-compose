@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1-labs
 # NOTE:
 # 
-# At project root dir: `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.13 -f docker/dev6.Dockerfile .`
+# At project's root dir: `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/dev6.Dockerfile .`
 # 
 
 ARG DOCKER_UBUNTU_VERSION=24.04
 FROM ubuntu:${DOCKER_UBUNTU_VERSION}
 
 ARG ARKIME_BRANCH=dev6
-ARG PYTHON=python3.13
+ARG PYTHON=python3.12
 ENV ARKIME_BRANCH $ARKIME_BRANCH
 ENV PYTHON $PYTHON
 
@@ -35,7 +35,7 @@ RUN \
   apt-get update && \
   apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd logrotate \
     procps iproute2 ethtool libyaml-dev libmaxminddb0 libcurl4 libpcap0.8 libglib2.0-0 libnghttp2-14 libyara10 librdkafka1 libpcre3 \
-    python3.13 python3.13-dev python3.13-venv libpython3.13 libpython3.13-stdlib python3-pip
+    python3.12 python3.12-dev python3.12-venv libpython3.12 libpython3.12-stdlib python3-pip
 
 
 # Declare default `ARG`s
