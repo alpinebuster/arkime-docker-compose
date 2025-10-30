@@ -234,7 +234,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./scripts/start_arkime.sh:/opt/arkime/app/start_arkime.sh
-      - ./parsers/example.py:/opt/arkime/parsers/example.py
+      - ./parsers/dta.py:/opt/arkime/parsers/dta.py
       - ./etc/config.ini:/opt/arkime/etc/config.ini
       - ./etc/capture.env:/opt/arkime/etc/capture.env
       - ./logs/arkime:/etc/logrotate.d/arkime
