@@ -1,3 +1,9 @@
+# syntax=docker/dockerfile:1-labs
+# NOTE:
+# 
+# At project root dir: `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.13 -f docker/dev6.Dockerfile .`
+# 
+
 ARG DOCKER_UBUNTU_VERSION=24.04
 FROM ubuntu:${DOCKER_UBUNTU_VERSION}
 
