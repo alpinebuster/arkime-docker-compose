@@ -4,31 +4,36 @@ import arkime
 import arkime_session
 import arkime_packet
 
-
+# Create a new field in the session we will be setting
+# REF: `https://arkime.com/taggerformat`
+#      `https://arkime.com/settings#custom-fields`
+pos = arkime.field_define("dta_rulz", "kind:lotermfield;db:dta_rulz;friendly:DTA Results;help:DTA results with the power of AI")
 # REF: `https://arkime.com/faq#life-of-a-packet`
 #      `https://arkime.com/python`
-print("\nPython Arkime Module - Example\n")
+print("\nDTA Python Module", "VERSION", arkime.VERSION, "CONFIG_PREFIX", arkime.CONFIG_PREFIX, "POS", pos)
 
-def my_parsers_cb(session, packetBytes, packetLen, direction):
+def my_parsers_cb(session, packetBytes, packetLen, direction) -> int:
     # Write code here to parse the bytes and extract information
     print("PARSER:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "len", packetLen, "which", direction)
 
-    # then you could set a field
-    # arkime_session.add_string(session, pos, "my value")
+    # Set a field
+    arkime_session.add_string(session, "dta_rulz", f"True")
+    arkime_session.add_tag(session, f"packetLen: {packetLen}_{direction}")
 
     # A parser should return -1 to unregister itself, 0 to continue parsing
     return 0
 def my_classify_callback(session, packetBytes, packetLen, direction):
     print("CLASSIFY:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "len", packetLen, "which", direction)
 
-    # Example of adding a tag
-    arkime_session.add_tag(session, "python")
+    # Adding a tag
+    arkime_session.add_tag(session, f"python_{direction}")
 
-    # Do some kind of check to see if you want to classify this session, if so register
+    # Do some kind of check to classify this session by registering the parserCb
     arkime_session.register_parser(session, my_parsers_cb)
 
 def my_pre_save_callback(session, final):
     print("PRE SAVE:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "final", final)
+    arkime_session.add_tag(session, f"save FPR: 99%")
 def my_save_callback(session, final):
     print("SAVE:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "final", final)
 
@@ -49,12 +54,13 @@ def my_ip_cb(batch, packet, packetBytes, packetLen):
 
 
 ### Start ###
+# This will match all TCP sessions
 arkime.register_tcp_classifier("test", 0, bytes("", "ascii"), my_classify_callback)
+
 arkime.register_pre_save(my_pre_save_callback)
 arkime.register_save(my_save_callback)
 
-# EtherType: 0x0800 (IPv4) or 0x86DD (IPv6)
-# 
+
 # /* Ethernet protocol ID's */
 # #define	ETHERTYPE_PUP		0x0200          /* Xerox PUP */
 # #define ETHERTYPE_SPRITE	0x0500		/* Sprite */
@@ -77,11 +83,7 @@ arkime.register_save(my_save_callback)
 #
 #arkime_packet.set_ethernet_cb(0x0800, my_ethernet_cb)
 
-# Register an IP protocol packet callback that will be called for packets of the given protocol.
-# 
-#  type: The IP protocol to register the callback for.
-#  ipCb: The callback to call for packets of the given protocol.
-#
+
 # /* Standard well-defined IP protocols.  */
 # enum
 #   {
@@ -144,7 +146,3 @@ arkime.register_save(my_save_callback)
 # 
 # FIXME
 #arkime_packet.set_ip_cb(0x06, my_ip_cb)
-
-# Create a new field in the session we will be setting
-pos = arkime.field_define("arkime_rulz", "kind:lotermfield;db:arkime_rulz")
-print("VERSION", arkime.VERSION, "CONFIG_PREFIX", arkime.CONFIG_PREFIX, "POS", pos)
