@@ -91,7 +91,7 @@ def run_ethernet_cb(
     batch: ArkimePacketBatch,
     packet: ArkimePacket,
     packetBytes: memoryview,
-    packetLen: int,
+    type: int,
     description: str
 ) -> PacketRC:
     """
@@ -101,15 +101,15 @@ def run_ethernet_cb(
         batch: The opaque batch object.
         packet: The opaque packet object.
         packetBytes: The memory view of the packet bytes
-        packetLen: The length of the packet in bytes.
-        description: A string description of the packet.
+        type: The Ethertype of the packet now
+        description: A string description of the packet now
     """
     ...
 def run_ip_cb(
     batch: ArkimePacketBatch,
     packet: ArkimePacket,
     packetBytes: memoryview,
-    packetLen: int,
+    type: int,
     description: str
 ) -> PacketRC:
     """
@@ -119,7 +119,7 @@ def run_ip_cb(
         batch: The opaque batch object.
         packet: The opaque packet object.
         packetBytes: A memoryview of the packet bytes.
-        packetLen: The length of the packet in bytes.
-        description: A string description of the packet.
+        type: The ip protocol of the packet now
+        description: A string description of the packet now
     """
     ...
