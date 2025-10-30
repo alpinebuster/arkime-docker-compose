@@ -9,5 +9,8 @@
         "spidata"
     ],
     "editor.fontSize": 13,
-    "remote.autoForwardPorts": false
+    "remote.autoForwardPorts": false,
+    "python.analysis.extraPaths": [
+        "./parsers/stubs"
+    ]
 }

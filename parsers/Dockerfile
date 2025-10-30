@@ -24,8 +24,8 @@ FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-${DEBIAN_VERSION} AS deps_base
       echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb ${DEBIAN_VERSION} main" | tee /etc/apt/sources.list.d/redis.list
 
     RUN \
-       --mount=type=cache,target=/var/cache/apt,sharing=locked \
-       --mount=type=cache,target=/var/lib/apt,sharing=locked \
+      --mount=type=cache,target=/var/cache/apt,sharing=locked \
+      --mount=type=cache,target=/var/lib/apt,sharing=locked \
       apt-get update -qq && \
       DEBIAN_FRONTEND=noninteractive apt-get install -yqq --no-install-recommends \
           nginx-light \
