@@ -1,0 +1,12 @@
+numpy
+torch
+pyyaml
+requests
+scikit-learn
+auto-sklearn
+seaborn
+openml
+configspace
+hyperopt
+xgboost
+catboost

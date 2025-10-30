@@ -7,7 +7,7 @@ import arkime_packet
 # Create a new field in the session we will be setting
 # REF: `https://arkime.com/taggerformat`
 #      `https://arkime.com/settings#custom-fields`
-pos = arkime.field_define("dta_rulz", "kind:lotermfield;db:dta_rulz;friendly:DTA Results;help:DTA results with the power of AI")
+pos = arkime.field_define("dta_rulz", "kind:lotermfield;group:general;db:dta_rulz;count:true;friendly:DTA Results;help:DTA results with the power of AI")
 # REF: `https://arkime.com/faq#life-of-a-packet`
 #      `https://arkime.com/python`
 print("\nDTA Python Module", "VERSION", arkime.VERSION, "CONFIG_PREFIX", arkime.CONFIG_PREFIX, "POS", pos)
