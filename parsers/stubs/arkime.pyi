@@ -4,7 +4,7 @@ Python Arkime Module
 The Python Arkime module has high level methods to register callbacks for packet processing.
 """
 
-from typing import Any, Callable
+from .types import ClassifyCb, SaveCb, PortKind
 
 # === Constants ===
 VERSION: str           # The Arkime version as a string
@@ -12,47 +12,12 @@ CONFIG_PREFIX: str     # The Arkime install prefix, usually /opt/arkime
 API_VERSION: int       # The Arkime API version from arkime.h
 
 # === PortKind constants for register_port_classifier ===
-PortKind = int
 PORT_UDP_SRC: PortKind
 PORT_UDP_DST: PortKind
 PORT_TCP_SRC: PortKind
 PORT_TCP_DST: PortKind
 PORT_SCTP_SRC: PortKind
 PORT_SCTP_DST: PortKind
-
-# === Opaque objects ===
-ArkimeSession = Any
-memoryview = Any
-
-# === Callback types ===
-""" 
-This callback is called for the first packet of a session in each direction that matches the tcp/udp/port registered classifiers. The callback should look at the bytes and see if it understand the protocol. If it does it will usually call the arkime_session.ad_protocol and/or arkime_session.register_parser methods.
-
-Args:
-    session: The opaque session object, used with any arkime_session module methods.
-    packetBytes: The memory view of the packet bytes; only valid during the callback.
-    packetLen: The length of the packet.
-    direction: The direction of the packet; 0 for client to server, 1 for server to client.
-"""
-ClassifyCb = Callable[[ArkimeSession, memoryview, int, int], None]
-""" 
-This callback is called for the every packet of a session in each direction where the callback has been registered using arkime_session.register_parser. Return -1 to unregister the parser for the session, 0 is normal case or positive value for the number of bytes consume if this protocol wraps others (rare).
-
-Args:
-    session: The opaque session object, used with any arkime_session module methods.
-    packetBytes: The memory view of the packet bytes; only valid during the callback.
-    packetLen: The length of the packet.
-    direction: The direction of the packet; 0 for client to server, 1 for server to client.
-"""
-ParserCb = Callable[[ArkimeSession, memoryview, int, int], int]
-""" 
-This callback is used for both pre_save and save callbacks.
-
-Args:
-    session: The opaque session object, used with any arkime_session module methods.
-    final: True if this is the final session save callback, False if there are more linked sessions.
-"""
-SaveCb = Callable[[ArkimeSession, bool], None]
 
 # === Methods ===
 def field_define(fieldExpression: str, fieldDefinition: str) -> int:

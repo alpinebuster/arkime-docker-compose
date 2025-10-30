@@ -4,32 +4,16 @@ Python Arkime Packet Module
 The Python Arkime Packet module has methods for dealing with packets before they are associated with sessions. The API is very unpythonic and treats the packet as a opaque object that needs to be passed around.
 """
 
-from typing import Any, Callable
+from typing import Any
+
+from .types import PacketRC, ArkimePacket, ArkimePacketBatch, memoryview, PacketCb
 
 # === Constants for PacketRC ===
-PacketRC = int
 DO_PROCESS: PacketRC      # Process the packet normally
 CORRUPT: PacketRC         # The packet is corrupt
 UNKNOWN: PacketRC         # The packet is unknown and can't be processed
 DONT_PROCESS: PacketRC    # The packet should not be processed but can be freed
 DONT_PROCESS_OR_FREE: PacketRC  # The packet should not be processed and should not be freed
-
-# === Opaque objects ===
-ArkimePacketBatch = Any
-ArkimePacket = Any
-memoryview = Any
-
-# === Callback type ===
-""" 
-This callback is called for packets by the reader threads that the Python script has registered for. Usually some basic processing is done and then the run_ethernet_cb or run_ip_cb methods are called to process the packet. The callback should return the results from the run calls or one of the ARKIME_PACKET_* values.
-
-Args:
-    batch: The opaque batch object
-    packet: The opaque patch object
-    packetBytes: The memory view of the packet bytes; only valid during the callback.
-    packetLen: The length of the packet.
-"""
-PacketCb = Callable[[ArkimePacketBatch, ArkimePacket, memoryview, int], PacketRC]
 
 # === Methods ===
 def get(packet: ArkimePacket, field: str) -> Any:

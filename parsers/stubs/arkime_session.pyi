@@ -4,23 +4,9 @@ Python Arkime Session Module
 The Python Arkime Session module has methods for dealing with sessions. The API is very unpythonic and treats the session as a opaque object that needs to be passed around.
 """
 
-from typing import Any, Callable
+from typing import Any
 
-# === Opaque object ===
-ArkimeSession = Any
-memoryview = Any
-
-# === Callback type ===
-""" 
-This callback is called for the every packet of a session in each direction where the callback has been registered using arkime_session.register_parser. Return -1 to unregister the parser for the session, 0 is normal case or positive value for the number of bytes consume if this protocol wraps others (rare).
-
-Args:
-    session: The opaque session object, used with any arkime_session module methods.
-    packetBytes: The memory view of the packet bytes; only valid during the callback.
-    packetLen: The length of the packet.
-    direction: The direction of the packet; 0 for client to server, 1 for server to client.
-"""
-ParserCb = Callable[[ArkimeSession, memoryview, int, int], int]
+from .types import ArkimeSession, ParserCb
 
 # === Methods ===
 def add_int(session: ArkimeSession, fieldPosOrExp: int | str, value: int) -> None:
