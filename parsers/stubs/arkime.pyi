@@ -65,10 +65,11 @@ def register_tcp_classifier(name: str, matchOffset: int, matchBytes: bytes, clas
     Register a TCP classifier that will call the classifyCb callback for the first packet
     of a session in each direction that matches the matchBytes starting at the matchOffset.
 
-    name: The short name of the classifier, used internally to identify the classifier.
-    matchOffset: The byte offset in the packet where the matchBytes should be found.
-    matchBytes: The bytes to match in the packet.
-    classifyCb: The callback to call when the classifier matches.
+    Args:
+        name: The short name of the classifier, used internally to identify the classifier.
+        matchOffset: The byte offset in the packet where the matchBytes should be found.
+        matchBytes: The bytes to match in the packet.
+        classifyCb: The callback to call when the classifier matches.
     """
     ...
 def register_udp_classifier(name: str, matchOffset: int, matchBytes: bytes, classifyCb: ClassifyCb) -> None:
@@ -76,10 +77,11 @@ def register_udp_classifier(name: str, matchOffset: int, matchBytes: bytes, clas
     Register a UDP classifier that will call the classifyCb callback for the first packet
     of a session in each direction that matches the matchBytes starting at the matchOffset.
 
-    name: The short name of the classifier, used internally to identify the classifier.
-    matchOffset: The byte offset in the packet where the matchBytes should be found.
-    matchBytes: The bytes to match in the packet.
-    classifyCb: The callback to call when the classifier matches.
+    Args:
+        name: The short name of the classifier, used internally to identify the classifier.
+        matchOffset: The byte offset in the packet where the matchBytes should be found.
+        matchBytes: The bytes to match in the packet.
+        classifyCb: The callback to call when the classifier matches.
     """
     ...
 def register_sctp_classifier(name: str, matchOffset: int, matchBytes: bytes, classifyCb: ClassifyCb) -> None:
@@ -87,10 +89,11 @@ def register_sctp_classifier(name: str, matchOffset: int, matchBytes: bytes, cla
     Register a SCTP classifier that will call the classifyCb callback for the first packet
     of a session in each direction that matches the matchBytes starting at the matchOffset.
 
-    name: The short name of the classifier, used internally to identify the classifier.
-    matchOffset: The byte offset in the packet where the matchBytes should be found.
-    matchBytes: The bytes to match in the packet.
-    classifyCb: The callback to call when the classifier matches. The which field will contain the direction AND sctp stream id. Arkime will send full messages to the callback.
+    Args:
+        name: The short name of the classifier, used internally to identify the classifier.
+        matchOffset: The byte offset in the packet where the matchBytes should be found.
+        matchBytes: The bytes to match in the packet.
+        classifyCb: The callback to call when the classifier matches. The which field will contain the direction AND sctp stream id. Arkime will send full messages to the callback.
     """
     ...
 def register_sctp_protocol_classifier(name: str, protocol: int, classifyCb: ClassifyCb) -> None:
@@ -98,8 +101,9 @@ def register_sctp_protocol_classifier(name: str, protocol: int, classifyCb: Clas
     Register a SCTP protocol classifier that will call the classifyCb callback for the first packet
     of a session in each direction that matches the protocolId in the SCTP header.
 
-    name: The short name of the classifier, used internally to identify the classifier.
-    protocol: The protocol id in the SCTP header to match.
-    classifyCb: The callback to call when the classifier matches. The which field will contain the direction AND sctp stream id. Arkime will send full messages to the callback.
+    Args:
+        name: The short name of the classifier, used internally to identify the classifier.
+        protocol: The protocol id in the SCTP header to match.
+        classifyCb: The callback to call when the classifier matches. The which field will contain the direction AND sctp stream id. Arkime will send full messages to the callback.
     """
     ...
