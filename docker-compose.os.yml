@@ -285,6 +285,7 @@ services:
     volumes:
       - ./scripts/start_arkime.sh:/opt/arkime/app/start_arkime.sh
       - ./etc/viewer.ini:/opt/arkime/etc/viewer.ini
+      - ./etc/local_capture.ini:/opt/arkime/etc/local_capture.ini
       - ./etc/viewer.env:/opt/arkime/etc/viewer.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs

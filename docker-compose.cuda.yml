@@ -197,6 +197,14 @@ services:
       - NET_ADMIN
     restart: on-failure
     env_file: ["./.env"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              # device_ids: ['0','3']
+              capabilities: [gpu]
     environment:
       - PYTHON=${PYTHON}
       - ARKIME_HOST=${ARKIME_HOST}
@@ -251,6 +259,14 @@ services:
     container_name: arkime-viewer
     restart: on-failure
     env_file: ["./.env"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              # device_ids: ['0','3']
+              capabilities: [gpu]
     environment:
       - PYTHON=${PYTHON}
       - ARKIME_HOST_VIEWER=${ARKIME_HOST_VIEWER}
@@ -285,6 +301,7 @@ services:
     volumes:
       - ./scripts/start_arkime.sh:/opt/arkime/app/start_arkime.sh
       - ./etc/viewer.ini:/opt/arkime/etc/viewer.ini
+      - ./etc/local_capture.ini:/opt/arkime/etc/local_capture.ini
       - ./etc/viewer.env:/opt/arkime/etc/viewer.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs
