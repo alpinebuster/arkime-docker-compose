@@ -1,0 +1,6 @@
+{
+    "include": ["parsers"],
+    "extraPaths": ["parsers"],
+    "stubPath": "parsers/stubs",
+    "reportMissingModuleSource": false
+}

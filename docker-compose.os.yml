@@ -171,6 +171,7 @@ services:
       - ARKIME_INSTALL_DIR=${ARKIME_INSTALL_DIR}
       - ARKIME_PREFIX=${ARKIME_PREFIX}
       - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
+      # FIXME
       # - ARKIME__prefix=zzz
       - CAPTURE=off
       - VIEWER=off
@@ -236,6 +237,7 @@ services:
       - ./scripts/start_arkime.sh:/opt/arkime/app/start_arkime.sh
       - ./parsers/dta.py:/opt/arkime/parsers/dta.py
       - ./etc/config.ini:/opt/arkime/etc/config.ini
+      - ./etc/local_capture.ini:/opt/arkime/etc/local_capture.ini
       - ./etc/capture.env:/opt/arkime/etc/capture.env
       - ./logs/arkime:/etc/logrotate.d/arkime
       - ./logs:/opt/arkime/logs

@@ -1,4 +1,6 @@
 # syntax=docker/dockerfile:1-labs
+
+# 
 # NOTE:
 # 
 # At project's root dir: `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/dev6.Dockerfile .`
@@ -11,31 +13,43 @@ ARG ARKIME_BRANCH=dev6
 ARG PYTHON=python3.12
 ENV ARKIME_BRANCH $ARKIME_BRANCH
 ENV PYTHON $PYTHON
+ENV DEBIAN_FRONTEND=noninteractive
 
 LABEL org.opencontainers.image.authors="alpinebuster <imzqqq@hotmail.com>"
 LABEL org.opencontainers.image.source='https://github.com/alpinebuster/arkime-docker-compose'
 LABEL org.opencontainers.image.description="DTA with Arkime 6 dev builds"
 LABEL org.opencontainers.image.licenses='AGPL-3.0-or-later'
 
-ENV DEBIAN_FRONTEND=noninteractive
+
 # Ref: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-  sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get install -y --no-install-recommends ca-certificates openssl software-properties-common && \
-  release=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release} main restricted universe multiverse" >> /etc/apt/sources.list && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list && \
-  add-apt-repository -y ppa:deadsnakes/ppa && \
-  apt-get update && \
-  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd logrotate \
+  sed -i 's|http://archive.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g; s|http://security.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/ubuntu.sources \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    openssl \
+    software-properties-common \
+  && update-ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN \
+  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  release=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
+  # `mirrors.aliyun.com`
+  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release} main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
+  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-updates main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
+  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
+  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
+  # && add-apt-repository -y ppa:deadsnakes/ppa \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends \
+    lsb-release build-essential g++ make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd logrotate \
     procps iproute2 ethtool libyaml-dev libmaxminddb0 libcurl4 libpcap0.8 libglib2.0-0 libnghttp2-14 libyara10 librdkafka1 libpcre3 \
-    python3.12 python3.12-dev python3.12-venv libpython3.12 libpython3.12-stdlib python3-pip
+    python3.12 python3.12-dev python3.12-venv python3-pip libpython3.12 libpython3.12-stdlib
 
 
 # Declare default `ARG`s
@@ -43,7 +57,7 @@ RUN \
 ARG INITIALIZE_DB=true
 # Wipe is the same as initialize except it keeps users intact
 ARG WIPE_DB=false
-ARG ES_OS_HOST=es_os-main
+ARG ES_OS_HOST=arkime_es_os-main
 ARG ES_OS_PORT=9200
 ARG ES_OS_USERNAME=elastic
 ARG ES_OS_PASSWORD=elastic_pwd
@@ -58,7 +72,7 @@ ARG ARKIME_PASSWORD=arkime_pwd
 ARG ARKIME_INSTALL_DIR="/opt/arkime"
 ARG ARKIME_APP_DIR="/opt/arkime/app"
 ARG CAPTURE=on
-ARG VIEWER=on
+ARG VIEWER=off
 ARG PARLIAMENT=off
 ARG CONT3XT=off
 ARG WISE=off
@@ -123,14 +137,14 @@ ENV PATH="${ARKIME_INSTALL_DIR}/bin:${ARKIME_APP_DIR}:${PATH}"
 WORKDIR /arkime
 
 RUN (cd .. ; git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/alpinebuster/arkime-ja4.git ./ja4)
-RUN cp ../ja4/ja4plus.c capture/plugins && \
-    # `/arkime/capture/plugins/` 
-    (cd capture/plugins; make) && \
-    (cd ../ja4; make) && \
-    # `/arkime/tests/`
-    (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
+RUN cp ../ja4/ja4plus.c capture/plugins \
+  # PWD: `/arkime`
+  && (cd capture/plugins; make) \
+  && (cd ../ja4; make) \
+  # PWD: `/arkime`
+  && (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
 RUN mv capture/plugins/ja4plus*.so ${ARKIME_INSTALL_DIR}/plugins/ && \
-    rm -f capture/plugins/ja4plus.c
+  rm -f capture/plugins/ja4plus.c
 
 
 WORKDIR ${ARKIME_INSTALL_DIR}
@@ -140,7 +154,7 @@ RUN \
   rm -rf /ja4 && \
   rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8005
-EXPOSE 3220
+EXPOSE 8005/tcp
+EXPOSE 3220/tcp
 
 ENTRYPOINT ["/opt/arkime/app/start_arkime.sh"]

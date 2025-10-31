@@ -4,7 +4,7 @@ echo "Giving OpenSearch/ElasticSearch time to start..."
 echo "Waiting for OS/ES ($ARKIME__elasticsearch) to start..."
 until curl -sS "$ARKIME__elasticsearch/_cluster/health?wait_for_status=yellow"
 do
-    echo "Waiting for OS/ES (http://$ES_OS_USERNAME:$ES_OS_PASSWORD@$ES_OS_HOST:$ES_OS_PORT) to start"
+    echo "Waiting for OS/ES (http://$ARKIME__elasticsearch) to start"
     sleep 1
 done
 echo "OS/ES ($ARKIME__elasticsearch) successfully started!"
@@ -102,4 +102,4 @@ if [ "$WISE" = "on" ]; then
 fi
 
 wait
-Echo "Job done!"
+echo "Job done!"

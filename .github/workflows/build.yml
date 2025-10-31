@@ -9,7 +9,9 @@ on:
 
 env:
   DOCKER_IMAGE: imzqqq/arkime
+  DOCKER_IMAGE_CUDA: imzqqq/arkime-cuda
   DOCKER_IMAGE_GHCR: ghcr.io/alpinebuster/arkime
+  DOCKER_IMAGE_GHCR_CUDA: ghcr.io/alpinebuster/arkime-cuda
   DOCKER_UBUNTU_VERSION: "24.04"
 
 jobs:
@@ -31,11 +33,29 @@ jobs:
             type=raw,value=latest,branches=main
             type=ref,event=tag
             type=sha
+      - name: Docker meta (cuda/parsers)
+        id: meta_cuda
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_IMAGE_CUDA }}
+          tags: |
+            type=raw,value=latest,branches=main
+            type=ref,event=tag
+            type=sha
       - name: Docker meta for GHCR
         id: meta_ghcr
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.DOCKER_IMAGE_GHCR }}
+          tags: |
+            type=raw,value=latest,branches=main
+            type=ref,event=tag
+            type=sha
+      - name: Docker meta for GHCR (cuda/parsers)
+        id: meta_ghcr_cuda
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_IMAGE_GHCR_CUDA }}
           tags: |
             type=raw,value=latest,branches=main
             type=ref,event=tag
@@ -60,7 +80,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push image
         if: ${{ github.event_name == 'push' }}
         uses: docker/build-push-action@v6
         with:
@@ -70,7 +90,18 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
+      - name: Build and push CUDA (parsers) image
+        if: ${{ github.event_name == 'push' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: parsers/Dockerfile
+          push: true
+          tags: ${{ steps.meta_cuda.outputs.tags }}
+          build-args: |
+            DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
+          platforms: linux/amd64,linux/arm64
       - name: Build and push GHCR image
         if: ${{ github.event_name == 'push' }}
         uses: docker/build-push-action@v6
@@ -81,4 +112,15 @@ jobs:
           tags: ${{ steps.meta_ghcr.outputs.tags }}
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
+      - name: Build and push GHCR CUDA (parsers) image
+        if: ${{ github.event_name == 'push' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: parsers/Dockerfile
+          push: true
+          tags: ${{ steps.meta_ghcr_cuda.outputs.tags }}
+          build-args: |
+            DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
+          platforms: linux/amd64,linux/arm64

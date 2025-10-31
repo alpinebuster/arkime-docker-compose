@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1-labs
 
+# 
 # NOTE:
 # 
 # At project's root dir:
@@ -7,8 +8,12 @@
 #      `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/dev6.Dockerfile .`
 #   2. Make sure that the nvidia driver and `nvidia-container-toolkit` are installed on the host machine, see `parsers/README.md` for how to install it
 #      `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime-cuda:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg FROM=zzz/arkime:latest -f parsers/Dockerfile .`
-#   3. Run nvidia-smi to test
-#      `docker run --rm --runtime=nvidia --gpus all zzz/arkime-cuda:latest nvidia-smi`
+#   3. Run `nvidia-smi` to test
+#      `docker run --network arkime_es_os -e INITIALIZE_DB=false -e WIPE_DB=false -e CAPTURE=off -e VIEWER=off -e ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT} -v $(pwd)/scripts/start_arkime.sh:/opt/arkime/app/start_arkime.sh -it --rm --runtime=nvidia --gpus all zzz/arkime-cuda:latest`
+#      `docker run -it --rm --entrypoint /bin/bash --gpus all zzz/arkime-cuda:latest`
+#      `docker run -it --rm --entrypoint /bin/bash --gpus all zzz/arkime-cuda:latest -c nvidia-smi`
+#      `docker run --rm --entrypoint /bin/bash --gpus all zzz/arkime-cuda:latest -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true" /usr/bin/nvidia-smi`
+#      `docker run --rm --gpus all nvidia/cuda:13.0.1-cudnn-runtime-ubuntu${DOCKER_UBUNTU_VERSION} bash -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true"`
 # 
 
 ARG ARKIME_VERSION=latest
@@ -19,13 +24,14 @@ ARG PYTHON_VERSION=3.12
 # first of all, we create a base image with dependencies which we can copy into the
 # target image. For repeated rebuilds, this is much faster than apt installing
 # each time.
-FROM nvidia/cuda:13.0.1-cudnn-devel-ubuntu${DOCKER_UBUNTU_VERSION} AS deps_base
+# `nvidia/cuda:13.0.1-cudnn-devel-ubuntu${DOCKER_UBUNTU_VERSION}`
+FROM nvidia/cuda:13.0.1-cudnn-runtime-ubuntu${DOCKER_UBUNTU_VERSION} AS deps_base
 
 # now build the final image, based on the the regular *arkime* docker image
 FROM $FROM
   LABEL org.opencontainers.image.authors="alpinebuster <imzqqq@hotmail.com>"
   LABEL org.opencontainers.image.source='https://github.com/alpinebuster/arkime-docker-compose'
-  LABEL org.opencontainers.image.description="DTA with Arkime 6 dev builds for Python parsers"
+  LABEL org.opencontainers.image.description="DTA with CUDA & Arkime 6 dev builds for Python parsers"
   LABEL org.opencontainers.image.licenses='AGPL-3.0-or-later'
 
   ENV DEBIAN_FRONTEND=noninteractive
@@ -42,14 +48,6 @@ FROM $FROM
   ENV PATH=/usr/local/cuda/bin:${PATH}
   ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
 
-  RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update \
-    && apt-get install -y --no-install-recommends \
-      curl \
-      python3-venv \
-    && rm -rf /var/lib/apt/lists/*
   RUN python3 -m venv /opt/venv
   ENV PATH="/opt/venv/bin:$PATH"
 
@@ -58,7 +56,7 @@ FROM $FROM
     python3 -m pip install --upgrade pip setuptools wheel && \
     python3 -m pip install --prefix=/install --no-deps -r ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
   ENV PATH=/install/bin:${PATH}
-  # NOTE: `ARG PYTHON=python3.12` is set by `zzz/arkime:latest` base image
+  # NOTE: `ARG PYTHON=python3.12` is set by default in `zzz/arkime:latest` base image
   ENV PYTHONPATH=/install/lib/${PYTHON}/site-packages:${PYTHONPATH}
 
   # Expose viewer listener port
