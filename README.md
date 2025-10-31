@@ -1,6 +1,14 @@
 # Arkime Docker Cluster
 
+A Docker Compose setup for [Arkime](http://arkime.com/) that supports GPU-accelerated Python Arkime parsers and easy integration of custom plugins. The stack uses [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) to expose GPUs to Python Arkime parsers, allowing compute-intensive parsing tasks to leverage [CUDA](https://docs.nvidia.com/cuda/index.html). The compose files and Dockerfiles are structured so you can:
+
+- enable GPU access per service with `--gpus`/runtime settings,
+- build Python Arkime parser images containing required libraries,
+- mount or install custom plugins without modifying Arkime core,
+- and run the entire stack locally or in CI with minimal changes.
+
 ## Getting started
+
 Use the special hostname `host.docker.internal` for ES_OS_HOST if OpenSearch/Elasticsearch is running on the same host.
 You may need to specify a network mode for docker, such as `--network=host`.
 
