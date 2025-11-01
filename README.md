@@ -1,4 +1,4 @@
-# Arkime Docker Cluster
+# Arkime Docker Compose
 
 A Docker Compose setup for [Arkime](http://arkime.com/) that supports GPU-accelerated Python Arkime parsers and easy integration of custom plugins. The stack uses [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) to expose GPUs to Python Arkime parsers, allowing compute-intensive parsing tasks to leverage [CUDA](https://docs.nvidia.com/cuda/index.html). The compose files and Dockerfiles are structured so you can:
 

@@ -144,6 +144,39 @@ services:
       - arkime_es_os
     profiles: ["optional"]
 
+  base-image-builder:
+    build:
+      context: .
+      dockerfile: ./docker/dev6.Dockerfile
+      args:
+        - DOCKER_UBUNTU_VERSION=${DOCKER_UBUNTU_VERSION}
+        - PYTHON=${PYTHON}
+    pull_policy: never
+    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    container_name: base-image-builder
+    restart: on-failure:12
+    env_file: ["./.env"]
+    environment:
+      - PYTHON=${PYTHON}
+      - ARKIME_VERSION=${ARKIME_VERSION}
+      - INITIALIZE_DB=true
+      - WIPE_DB=false
+      - ES_OS_HOST=${ES_OS_HOST}
+      - ES_OS_PORT=${ES_OS_PORT}
+      - ES_OS_USERNAME=${ES_OS_USERNAME}
+      - ES_OS_PASSWORD=${ES_OS_PASSWORD}
+      - ARKIME_USERNAME=${ARKIME_USERNAME}
+      - ARKIME_PASSWORD=${ARKIME_PASSWORD}
+      - ARKIME_INSTALL_DIR=${ARKIME_INSTALL_DIR}
+      - ARKIME_PREFIX=${ARKIME_PREFIX}
+      - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
+      - CAPTURE=off
+      - VIEWER=off
+      - PARLIAMENT=off
+      - CONT3XT=off
+      - WISE=off
+    entrypoint: ["/bin/bash"]
+
   arkime-setup:
     build:
       context: .
@@ -171,14 +204,14 @@ services:
       - ARKIME_INSTALL_DIR=${ARKIME_INSTALL_DIR}
       - ARKIME_PREFIX=${ARKIME_PREFIX}
       - ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT}
-      # FIXME
-      # - ARKIME__prefix=zzz
       - CAPTURE=off
       - VIEWER=off
       - PARLIAMENT=off
       - CONT3XT=off
       - WISE=off
     depends_on:
+      base-image-builder:
+        condition: service_completed_successfully
       arkime_es_os-main:
         condition: service_healthy
     networks:

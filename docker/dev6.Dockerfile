@@ -26,7 +26,7 @@ RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
   sed -i 's|http://archive.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g; s|http://security.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/ubuntu.sources \
-  && apt-get update \
+  && apt-get update -y \
   && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
@@ -34,19 +34,21 @@ RUN \
     software-properties-common \
   && update-ca-certificates \
   && rm -rf /var/lib/apt/lists/*
+# RUN release=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
+#   && if [ -z "$release" ]; then echo "Could not determine release codename"; exit 1; fi \
+#   # `mirrors.aliyun.com`
+#   && echo "deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release} main restricted universe multiverse" > /etc/apt/sources.list \
+#   && echo "deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-updates main restricted universe multiverse" >> /etc/apt/sources.list \
+#   && echo "deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list \
+#   && echo "deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list \
+#   && apt-get update -y
 
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  release=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
-  # `mirrors.aliyun.com`
-  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release} main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
-  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-updates main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
-  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
-  && echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list.d/ubuntu.sources \
-  # && add-apt-repository -y ppa:deadsnakes/ppa \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends \
+  add-apt-repository -y ppa:deadsnakes/ppa && \
+  apt-get update -y && \
+  apt-get install -y --no-install-recommends \
     lsb-release build-essential g++ make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd logrotate \
     procps iproute2 ethtool libyaml-dev libmaxminddb0 libcurl4 libpcap0.8 libglib2.0-0 libnghttp2-14 libyara10 librdkafka1 libpcre3 \
     python3.12 python3.12-dev python3.12-venv python3-pip libpython3.12 libpython3.12-stdlib
