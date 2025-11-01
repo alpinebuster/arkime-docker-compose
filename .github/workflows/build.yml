@@ -101,7 +101,7 @@ jobs:
           tags: ${{ steps.meta_cuda.outputs.tags }}
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
-            FROM=${{ env.DOCKER_IMAGE_CUDA }}
+            FROM=${{ env.DOCKER_IMAGE }}
           platforms: linux/amd64,linux/arm64
       - name: Build and push GHCR image
         if: ${{ github.event_name == 'push' }}
@@ -124,5 +124,5 @@ jobs:
           tags: ${{ steps.meta_ghcr_cuda.outputs.tags }}
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
-            FROM=${{ env.DOCKER_IMAGE_GHCR_CUDA }}
+            FROM=${{ env.DOCKER_IMAGE_GHCR }}
           platforms: linux/amd64,linux/arm64
