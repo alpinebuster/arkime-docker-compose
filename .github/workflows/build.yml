@@ -90,7 +90,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
       - name: Build and push CUDA (parsers) image
         if: ${{ github.event_name == 'push' }}
         uses: docker/build-push-action@v6
@@ -102,7 +102,7 @@ jobs:
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
             FROM=${{ env.DOCKER_IMAGE }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
       - name: Build and push GHCR image
         if: ${{ github.event_name == 'push' }}
         uses: docker/build-push-action@v6
@@ -113,7 +113,7 @@ jobs:
           tags: ${{ steps.meta_ghcr.outputs.tags }}
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
       - name: Build and push GHCR CUDA (parsers) image
         if: ${{ github.event_name == 'push' }}
         uses: docker/build-push-action@v6
@@ -125,4 +125,4 @@ jobs:
           build-args: |
             DOCKER_UBUNTU_VERSION=${{ env.DOCKER_UBUNTU_VERSION }}
             FROM=${{ env.DOCKER_IMAGE_GHCR }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
