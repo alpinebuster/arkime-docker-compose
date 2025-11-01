@@ -32,8 +32,7 @@ RUN \
     curl \
     openssl \
     software-properties-common \
-  && update-ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+  && update-ca-certificates
 # RUN release=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
 #   && if [ -z "$release" ]; then echo "Could not determine release codename"; exit 1; fi \
 #   # `mirrors.aliyun.com`
