@@ -1581,14 +1581,14 @@ reference = "tsinghua"
 
 [[package]]
 name = "ipykernel"
-version = "6.31.0"
+version = "7.1.0"
 description = "IPython Kernel for Jupyter"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "ipykernel-6.31.0-py3-none-any.whl", hash = "sha256:abe5386f6ced727a70e0eb0cf1da801fa7c5fa6ff82147747d5a0406cd8c94af"},
-    {file = "ipykernel-6.31.0.tar.gz", hash = "sha256:2372ce8bc1ff4f34e58cafed3a0feb2194b91fc7cad0fc72e79e47b45ee9e8f6"},
+    {file = "ipykernel-7.1.0-py3-none-any.whl", hash = "sha256:763b5ec6c5b7776f6a8d7ce09b267693b4e5ce75cb50ae696aaefb3c85e1ea4c"},
+    {file = "ipykernel-7.1.0.tar.gz", hash = "sha256:58a3fc88533d5930c3546dc7eac66c6d288acde4f801e2001e65edc5dc9cf0db"},
 ]
 
 [package.dependencies]
@@ -1608,7 +1608,7 @@ traitlets = ">=5.4.0"
 
 [package.extras]
 cov = ["coverage[toml]", "matplotlib", "pytest-cov", "trio"]
-docs = ["intersphinx-registry", "myst-parser", "pydata-sphinx-theme", "sphinx", "sphinx-autodoc-typehints", "sphinxcontrib-github-alt", "sphinxcontrib-spelling", "trio"]
+docs = ["intersphinx-registry", "myst-parser", "pydata-sphinx-theme", "sphinx (<8.2.0)", "sphinx-autodoc-typehints", "sphinxcontrib-github-alt", "sphinxcontrib-spelling", "trio"]
 pyqt5 = ["pyqt5"]
 pyside6 = ["pyside6"]
 test = ["flaky", "ipyparallel", "pre-commit", "pytest (>=7.0,<9)", "pytest-asyncio (>=0.23.5)", "pytest-cov", "pytest-timeout"]
@@ -2058,10 +2058,9 @@ reference = "tsinghua"
 name = "mako"
 version = "1.3.10"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
-optional = false
+optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"gpu\""
 files = [
     {file = "mako-1.3.10-py3-none-any.whl", hash = "sha256:baef24a52fc4fc514a0887ac600f9f1cff3d82c61d4d700a1fa84d597b88db59"},
     {file = "mako-1.3.10.tar.gz", hash = "sha256:99579a6f39583fa7e5630a28c3c1f440e4e97a414b80372649c0ce338da2ea28"},
@@ -4308,10 +4307,9 @@ reference = "tsinghua"
 name = "pycuda"
 version = "2025.1.2"
 description = "Python wrapper for Nvidia CUDA"
-optional = false
+optional = true
 python-versions = "~=3.8"
 groups = ["main"]
-markers = "extra == \"gpu\""
 files = [
     {file = "pycuda-2025.1.2.tar.gz", hash = "sha256:0dd82911d72d8e03c63128ae44e99cfb7b4689094aba6cc5193d8e944717aafa"},
 ]
@@ -4620,10 +4618,9 @@ reference = "tsinghua"
 name = "pytools"
 version = "2025.2.5"
 description = "A collection of tools for Python"
-optional = false
+optional = true
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "extra == \"gpu\""
 files = [
     {file = "pytools-2025.2.5-py3-none-any.whl", hash = "sha256:42e93751ec425781e103bbcd769ba35ecbacd43339c2905401608f2fdc30cf19"},
     {file = "pytools-2025.2.5.tar.gz", hash = "sha256:a7f5350644d46d98ee9c7e67b4b41693308aa0f5e9b188d8f0694b27dc94e3a2"},
@@ -5283,10 +5280,9 @@ reference = "tsinghua"
 name = "siphash24"
 version = "1.8"
 description = "Streaming-capable SipHash-1-3 and SipHash-2-4 Implementation"
-optional = false
+optional = true
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "extra == \"gpu\""
 files = [
     {file = "siphash24-1.8-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:53aba67b3437d7b56d85ad77879dfe314094f687df1de746fa7c6f5b3f6c1436"},
     {file = "siphash24-1.8-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:3c28925b79954244c8e36ced9b8e88b1cb2d0919baf2b92ef7e8b8f96fd274aa"},
@@ -6651,10 +6647,10 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [extras]
-gpu = ["onnx", "onnx-graphsurgeon", "onnxconverter-common", "onnxruntime", "onnxruntime-tools", "pycuda", "torch", "torcheval", "torchinfo", "torchvision"]
+gpu = ["onnx", "onnx-graphsurgeon", "onnxconverter-common", "onnxruntime", "onnxruntime-tools", "torch", "torcheval", "torchinfo", "torchvision"]
 local = []
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<=3.13"
-content-hash = "d2b54b24701adaa465bda06743bba0aad473fe1a1750936a3c20a649808ccd44"
+content-hash = "c16860c3c517e0eaae5186ae130e3e75d77f120ca3438bc2dcb32073c3e1ce38"

@@ -19,6 +19,7 @@
 ARG ARKIME_VERSION=latest
 ARG FROM=zzz/arkime:$ARKIME_VERSION
 ARG DOCKER_UBUNTU_VERSION=24.04
+# NOTE: `ARG PYTHON=python3.12` is set by default in `zzz/arkime:latest` base image
 ARG PYTHON_VERSION=3.12
 
 # first of all, we create a base image with dependencies which we can copy into the
@@ -51,17 +52,46 @@ FROM $FROM
   RUN python3 -m venv /opt/venv
   ENV PATH="/opt/venv/bin:$PATH"
 
-  COPY parsers/requirements.txt ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
-  RUN --mount=type=cache,target=/root/.cache/pip \
+  WORKDIR ${ARKIME_INSTALL_DIR}/parsers/
+  COPY parsers/ ${ARKIME_INSTALL_DIR}/parsers/
+  RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends \
+      build-essential \
+      libssl-dev \
+      libffi-dev \
+      pkg-config \
+      cmake \
+    && rm -rf /var/lib/apt/lists/*
+  ENV PATH="/root/.cargo/bin:${PATH}"
+  RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
+    . "$HOME/.cargo/env" && \
+    rustup default stable && \
+    rustc --version && cargo --version
+
+  RUN \
+    --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/pypoetry \
     python3 -m pip install --upgrade pip setuptools wheel && \
-    python3 -m pip install --prefix=/install -r ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
-  ENV PATH=/install/bin:${PATH}
-  # NOTE: `ARG PYTHON=python3.12` is set by default in `zzz/arkime:latest` base image
-  ENV PYTHONPATH=/install/lib/${PYTHON}/site-packages:${PYTHONPATH}
+    python3 -m pip install poetry && \
+    python3 -m pip install --no-cache-dir maturin setuptools-rust
+
+  WORKDIR ${ARKIME_INSTALL_DIR}/parsers/backbone_td
+  RUN \
+    --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/pypoetry \
+    # export POETRY_VIRTUALENVS_CREATE=false && \
+    . "$HOME/.cargo/env" && \
+    poetry install --no-interaction --extras gpu --extras local -vv
+    # python3 -m pip install --prefix=/install -r ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
+  # ENV PATH=/install/bin:${PATH}
+  # ENV PYTHONPATH=/install/lib/${PYTHON}/site-packages:${PYTHONPATH}
 
   # Expose viewer listener port
   EXPOSE 8005/tcp
 
+  WORKDIR ${ARKIME_INSTALL_DIR}/
   ENTRYPOINT ["/opt/arkime/app/start_arkime.sh"]
 
   # Replace the healthcheck with one which checks *all* the workers.
