@@ -11,6 +11,35 @@ API_VERSION : Integer - The Arkime API version from arkime.h
 ## Getting Started
 Create a `example.py` file at `/opt/arkime/parsers/` folder.
 
+### Download Installer for Linux Ubuntu 24.04 x86_64
+The base installer is available for download below.
+
+#### CUDA Toolkit Installer	
+Installation Instructions:
+
+```sh
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i cuda-keyring_1.1-1_all.deb
+sudo apt-get update
+sudo apt-get -y install cuda-toolkit-13-0
+
+export PATH=/usr/local/cuda/bin:$PATH
+```
+
+#### Driver Installer	
+
+NVIDIA Driver Instructions (choose one option)
+To install the open kernel module flavor:
+
+```sh
+sudo apt-get install -y nvidia-open
+```
+
+To install the proprietary kernel module flavor:
+```sh
+sudo apt-get install -y cuda-drivers
+```
+
 ### nvidia-docker
 
 - `sudo fuser -v /dev/nvidia*`

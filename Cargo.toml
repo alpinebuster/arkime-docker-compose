@@ -3,9 +3,9 @@
 
 [workspace]
 members = [
-	"rust",
+	"parsers",
 ]
 resolver = "2"
 exclude = [
-    "libs",
+    "arkime",
 ]
