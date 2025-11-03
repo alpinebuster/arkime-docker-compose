@@ -1,2 +1,34 @@
 .env
 .initialized
+
+# rust
+/target/
+/src/*.so
+
+# mdbook
+/book
+
+# Poetry will create a setup.py, which we don't want to include.
+/setup.py
+
+# Don't include users' poetry configs
+/poetry.toml
+
+*.h5
+*.r
+profile_files
+*.log.*
+*output*.pcap
+*output*.png
+*output*.csv
+*.pin
+*test*.sh
+*test*.py
+wandb
+runs
+
+# python
+__pycache__
+**/*/*.onnx
+**/*/*.trt
+**/*/*.so

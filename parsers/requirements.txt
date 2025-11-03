@@ -1,9 +1,8 @@
 numpy
+scipy
 torch
 pyyaml
 requests
-scikit-learn
-auto-sklearn
 seaborn
 openml
 configspace

@@ -17,7 +17,8 @@ def my_parsers_cb(session, packetBytes, packetLen, direction) -> int:
     print("PARSER:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "len", packetLen, "which", direction)
 
     # Set a field
-    arkime_session.add_string(session, "dta_rulz", f"True")
+    # arkime_session.add_string(session, "dta_rulz", f"True")
+    arkime_session.add_string(session, str(pos), f"True")
     arkime_session.add_tag(session, f"packetLen: {packetLen}_{direction}")
 
     # A parser should return -1 to unregister itself, 0 to continue parsing

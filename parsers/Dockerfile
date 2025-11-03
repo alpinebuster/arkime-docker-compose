@@ -40,7 +40,7 @@ FROM $FROM
   COPY --from=deps_base /usr/local/cuda-13.0/ /usr/local/cuda-13.0/
   COPY --from=deps_base /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
   COPY --from=deps_base /usr/include /usr/include
-  # Copy and run commands (such as nvidia-smi, etc.)
+  # Copy commands (such as nvidia-smi, etc.)
   COPY --from=deps_base /usr/bin/nvidia* /usr/bin/
 
   # Environmental variables
@@ -54,7 +54,7 @@ FROM $FROM
   COPY parsers/requirements.txt ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
   RUN --mount=type=cache,target=/root/.cache/pip \
     python3 -m pip install --upgrade pip setuptools wheel && \
-    python3 -m pip install --prefix=/install --no-deps -r ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
+    python3 -m pip install --prefix=/install -r ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
   ENV PATH=/install/bin:${PATH}
   # NOTE: `ARG PYTHON=python3.12` is set by default in `zzz/arkime:latest` base image
   ENV PYTHONPATH=/install/lib/${PYTHON}/site-packages:${PYTHONPATH}
