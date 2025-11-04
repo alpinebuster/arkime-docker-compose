@@ -84,9 +84,6 @@ FROM $FROM
     # export POETRY_VIRTUALENVS_CREATE=false && \
     . "$HOME/.cargo/env" && \
     poetry install --no-interaction --extras gpu --extras local -vv
-    # python3 -m pip install --prefix=/install -r ${ARKIME_INSTALL_DIR}/parsers/requirements.txt
-  # ENV PATH=/install/bin:${PATH}
-  # ENV PYTHONPATH=/install/lib/${PYTHON}/site-packages:${PYTHONPATH}
 
   # Expose viewer listener port
   EXPOSE 8005/tcp

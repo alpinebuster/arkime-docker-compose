@@ -1,6 +1,6 @@
 import sys
 
-import torch
+# import torch
 
 import arkime
 import arkime_session
@@ -14,9 +14,9 @@ pos = arkime.field_define("dta_rulz", "group:general;kind:lotermfield;db:dta_rul
 #      `https://arkime.com/python`
 print("\nDTA Python Module", "VERSION", arkime.VERSION, "CONFIG_PREFIX", arkime.CONFIG_PREFIX, "POS", pos)
 
-print(torch.cuda.device_count())
-for i in range(torch.cuda.device_count()):
-    print("Device: ", i, torch.cuda.get_device_name(i), "\n")
+# print("Device Count: ", torch.cuda.device_count())
+# for i in range(torch.cuda.device_count()):
+#     print("Device: ", i, torch.cuda.get_device_name(i), "\n")
 
 def my_parsers_cb(session, packetBytes, packetLen, direction) -> int:
     # Write code here to parse the bytes and extract information
