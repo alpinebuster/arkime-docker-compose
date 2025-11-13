@@ -12,5 +12,8 @@
     "remote.autoForwardPorts": false,
     "python.analysis.extraPaths": [
         "./parsers/stubs"
-    ]
+    ],
+    "files.associations": {
+        "arkime.h": "c"
+    }
 }
