@@ -7,10 +7,10 @@
 # `sudo chown -R 1000:1000 ./db`, `sudo rm -rf ./db/node-1/os/*`, `sudo rm -rf ./db/main/os/*` and delete `./etc/.initialized` file
 # `source .env`
 # 
-# `docker compose --progress=plain -f docker-compose.os.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.os.yml --profile optional build arkime-docs --no-cache=true`
-# `docker compose -f docker-compose.os.yml up -d`
-# `docker compose -f docker-compose.os.yml down`
-# `docker compose -f docker-compose.os.yml restart arkime-capture`
+# `docker compose --progress=plain -f docker-compose.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.yml --profile optional build arkime-docs --no-cache=true`
+# `docker compose -f docker-compose.yml up -d`
+# `docker compose -f docker-compose.yml down`
+# `docker compose -f docker-compose.yml restart arkime-capture`
 # 
 services:
   test-os:
