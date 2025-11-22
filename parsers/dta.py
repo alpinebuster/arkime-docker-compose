@@ -44,6 +44,16 @@ def my_pre_save_callback(session, final):
 def my_save_callback(session, final):
     print("SAVE:", arkime_session.get(session, "ip.src"), ":", arkime_session.get(session, "port.src"), "->", arkime_session.get(session, "ip.dst"), ":", arkime_session.get(session, "port.dst"), "final", final)
 
+    tls_ja4_pos = arkime.field_get("tls.ja4")
+    print("SAVE:", "tls.ja4_pos: ", tls_ja4_pos)
+
+    try:
+        print("\n\n\nJA4+ -> ", "tls.ja4: ", arkime_session.get(session, "tls.ja4"), "tls.ja4_r: ", arkime_session.get(session, "tls.ja4_r"), "tcp.ja4t: ", arkime_session.get(session, "tcp.ja4t"), "tcp.ja4l: ", arkime_session.get(session, "tcp.ja4l"), "tcp.ja4ls: ", arkime_session.get(session, "tcp.ja4ls"), "\n\n\n")
+
+        print("!tls.ja4: ", arkime_session.get(session, str(tls_ja4_pos)))
+    except Exception as e:
+        print("SAVE: Exception getting JA4+ fields:", e)
+
 def my_ethernet_cb(batch, packet, packetBytes, packetLen):
     print("ETHERNET:", "batch", batch, "packet", "packet", "bytes", packetBytes, "len", packetLen, "pktlen", arkime_packet.get(packet, "pktlen"))
 
