@@ -4,7 +4,7 @@
 # NOTE:
 # 
 # At project's root dir:
-#   1. Make sure that the `zzz/arkime:$ARKIME_VERSION` image is already available locally
+#   1. Make sure that the `zzz/arkime:$ARKIME_RELEASE_TAG` image is already available locally
 #      `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/dev6.Dockerfile .`
 #   2. Make sure that the nvidia driver and `nvidia-container-toolkit` are installed on the host machine, see `parsers/README.md` for how to install it
 #      `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime-cuda:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg FROM=zzz/arkime:latest -f parsers/Dockerfile .`
@@ -16,8 +16,8 @@
 #      `docker run --rm --gpus all nvidia/cuda:13.0.1-cudnn-runtime-ubuntu${DOCKER_UBUNTU_VERSION} bash -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true"`
 # 
 
-ARG ARKIME_VERSION=latest
-ARG FROM=zzz/arkime:$ARKIME_VERSION
+ARG ARKIME_RELEASE_TAG=dev6
+ARG FROM=zzz/arkime:$ARKIME_RELEASE_TAG
 ARG DOCKER_UBUNTU_VERSION=24.04
 # NOTE: `ARG PYTHON=python3.12` is set by default in `zzz/arkime:latest` base image
 ARG PYTHON_VERSION=3.12
