@@ -15,6 +15,32 @@ You may need to specify a network mode for docker, such as `--network=host`.
 Set environment variables to configure the container. (`ARKIME>__<config>=<value>` for default section or `ARKIME_<section>__<config>=<value>`)
 These variables take precedence over configuration file settings.
 
+### Dev commands
+
+> REF: `https://docs.opensearch.org/latest/install-and-configure/install-opensearch/docker/`
+> NOTE: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]; for more information see [https://www.elastic.co/guide/en/elasticsearch/reference/8.17/bootstrap-checks-max-map-count.html]
+
+Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
+Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
+
+```sh
+git pull
+git submodule update --init
+
+sudo chown -R 1000:1000 ./db
+sudo rm -rf ./db/main/os/*
+sudo rm -rf ./db/node-1/os/*
+# (Optional) Fresh start
+sudo rm -rf ./etc/.initialized
+
+source .env
+
+docker compose --progress=plain -f docker-compose.cuda.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.cuda.yml --profile optional build kime-docs --no-cache=true
+docker compose -f docker-compose.cuda.yml up -d
+docker compose -f docker-compose.cuda.yml down
+docker compose -f docker-compose.cuda.yml restart arkime-capture
+```
+
 ### Documentation
 
 ```sh

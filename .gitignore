@@ -1,5 +1,6 @@
 .env
 .initialized
+wise
 
 # rust
 /target/
