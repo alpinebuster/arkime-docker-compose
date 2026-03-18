@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dta-rust"
-version = "1.2.3"
+version = "1.0.0"
 description = "A lightweight method for detecting extremely low-proportion dt in backbone networks."
 authors = ["alpinebuster <imzqqq@hotmail.com>"]
 license = "AGPL-3.0-or-later"
@@ -9,22 +9,22 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Topic :: Communications :: Tor",
 ]
-# package-mode = false  # Disable packaging mode, only for dependency management
-packages = [
-    { include = "src" },
-]
-include = [
-    { path = "docs", format = "sdist" },
-    { path = "tests", format = "sdist" },
-    { path = "Cargo.toml", format = "sdist" },
-    { path = "Cargo.lock", format = "sdist" },
-    { path = "rust/Cargo.toml", format = "sdist" },
-    { path = "rust/build.rs", format = "sdist" },
-    { path = "rust/src/**", format = "sdist" },
-]
-exclude = [
-    "src/*.so",
-]
+package-mode = false  # Disable packaging mode, only for dependency management
+# packages = [
+#     { include = "src" },
+# ]
+# include = [
+#     { path = "docs", format = "sdist" },
+#     { path = "tests", format = "sdist" },
+#     { path = "Cargo.toml", format = "sdist" },
+#     { path = "Cargo.lock", format = "sdist" },
+#     { path = "rust/Cargo.toml", format = "sdist" },
+#     { path = "rust/build.rs", format = "sdist" },
+#     { path = "rust/src/**", format = "sdist" },
+# ]
+# exclude = [
+#     "src/*.so",
+# ]
 
 [[tool.poetry.source]]
 name = "tsinghua"

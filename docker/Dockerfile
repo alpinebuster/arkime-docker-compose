@@ -1,11 +1,25 @@
-ARG DOCKER_UBUNTU_VERSION=22.04
+# syntax=docker/dockerfile:1-labs
+
+# 
+# NOTE:
+# 
+# At project's root dir: `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/Dockerfile .`
+# 
+
+ARG DOCKER_UBUNTU_VERSION=24.04
 FROM ubuntu:${DOCKER_UBUNTU_VERSION}
 
+ARG ARKIME_VERSION=6.1.0
 ARG ARKIME_BRANCH=main
+ARG PYTHON=python3.12
 ENV ARKIME_BRANCH $ARKIME_BRANCH
+ENV ARKIME_VERSION $ARKIME_VERSION
+ENV PYTHON $PYTHON
+ENV DEBIAN_FRONTEND=noninteractive
 
 LABEL org.opencontainers.image.authors="alpinebuster <imzqqq@hotmail.com>"
 LABEL org.opencontainers.image.source='https://github.com/alpinebuster/arkime-docker-compose'
+LABEL org.opencontainers.image.description="DTA with Arkime 6 dev builds"
 LABEL org.opencontainers.image.licenses='AGPL-3.0-or-later'
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -13,21 +27,24 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-  sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get install -y --no-install-recommends ca-certificates openssl && \
-  release=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release} main restricted universe multiverse" >> /etc/apt/sources.list && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
-  echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu ${release}-security main restricted universe multiverse" >> /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get install -y lsb-release build-essential make git libtest-differences-perl sudo wget apt-utils tzdata apt-utils software-properties-common gnupg zstd logrotate && \
-  (cd /tmp && wget https://packages.ntop.org/apt-stable/22.04/all/apt-ntop-stable.deb && apt install -y ./apt-ntop-stable.deb) && \
-  # NOTE: must install `pfring` after `ntopng`
-  apt-get update && \
-  apt-get install -y pfring
+  sed -i 's|http://archive.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g; s|http://security.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/ubuntu.sources \
+  && apt-get update -y \
+  && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    openssl \
+    software-properties-common \
+  && update-ca-certificates
+
+RUN \
+  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  add-apt-repository -y ppa:deadsnakes/ppa && \
+  apt-get update -y && \
+  apt-get install -y --no-install-recommends \
+    lsb-release build-essential g++ make git libtest-differences-perl sudo wget apt-utils tzdata libnl-genl-3-dev zstd logrotate \
+    procps iproute2 ethtool libyaml-dev libmaxminddb0 libcurl4 libpcap0.8 libglib2.0-0 libnghttp2-14 libyara10 librdkafka1 libpcre3 \
+    python3.12 python3.12-dev python3.12-venv python3-pip libpython3.12 libpython3.12-stdlib
 
 
 # Declare default `ARG`s
@@ -35,7 +52,7 @@ RUN \
 ARG INITIALIZE_DB=true
 # Wipe is the same as initialize except it keeps users intact
 ARG WIPE_DB=false
-ARG ES_OS_HOST=es_os-main
+ARG ES_OS_HOST=arkime_es_os-main
 ARG ES_OS_PORT=9200
 ARG ES_OS_USERNAME=elastic
 ARG ES_OS_PASSWORD=elastic_pwd
@@ -51,7 +68,7 @@ ARG ARKIME_INSTALL_DIR="/opt/arkime"
 ARG ARKIME_APP_DIR="/opt/arkime/app"
 ARG CAPTURE=on
 ARG VIEWER=on
-ARG PARLIAMENT=on
+ARG PARLIAMENT=off
 ARG CONT3XT=off
 ARG WISE=off
 
@@ -82,17 +99,25 @@ ENV WISE $WISE
 RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  git clone https://github.com/arkime/arkime.git && \
-  (cd arkime; git checkout $ARKIME_BRANCH; ./easybutton-build.sh --nothirdparty --kafka --rminstall)
+  git clone -b ${ARKIME_BRANCH} https://github.com/alpinebuster/arkime.git && \
+  (cd arkime; PYTHON=${PYTHON} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 RUN \
-    export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
-    (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
-    # NOTE: create the etc/oui.txt, this is slow
-    # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'start_arkime.sh'
-    "${ARKIME_INSTALL_DIR}/bin/arkime_update_geo.sh"
+  (cd /arkime; ldd capture/capture) && \
+  export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
+  # Needed by `git describe --tags` when running `npm run bundle` command
+  git config --global --add safe.directory /arkime && \
+  (cd /arkime; INSTALL_BUNDLE=bundle make install) && \
+  # NOTE: create the etc/oui.txt, this is slow
+  # It's needed for importing PCAPs. This step is omitted during 'Configure', because ARKIME_INET=no is set in 'start_arkime.sh'
+  "${ARKIME_INSTALL_DIR}/bin/arkime_update_geo.sh"
+RUN \
+  wget -nv -P ${ARKIME_INSTALL_DIR}/etc/ https://raw.githubusercontent.com/arkime/arkime-test-data/main/GeoLite2-Country.mmdb && \
+  wget -nv -P ${ARKIME_INSTALL_DIR}/etc/ https://raw.githubusercontent.com/arkime/arkime-test-data/main/GeoLite2-ASN.mmdb
+
 
 # Add scripts
 # NOTE: The current docker compose context is `project_root_dir/`
+COPY ./parsers ${ARKIME_INSTALL_DIR}/parsers/
 COPY ./etc ${ARKIME_INSTALL_DIR}/etc/
 COPY ./scripts ${ARKIME_APP_DIR}/
 RUN chmod 755 ${ARKIME_APP_DIR}/*.sh
@@ -107,15 +132,15 @@ ENV PATH="${ARKIME_INSTALL_DIR}/bin:${ARKIME_APP_DIR}:${PATH}"
 # Using a semicolon (;) allows multiple commands to be executed in sequence within the parentheses. All commands are executed in the same subshell, maintaining the dependencies between the commands.
 WORKDIR /arkime
 
-RUN (cd .. ; git clone https://github.com/alpinebuster/arkime-ja4.git ./ja4)
+RUN (cd .. ; git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/alpinebuster/arkime-ja4.git ./ja4)
 RUN cp ../ja4/ja4plus.c capture/plugins && \
-    # `/arkime/capture/plugins/` 
-    (cd capture/plugins; make) && \
-    (cd ../ja4; make) && \
-    # `/arkime/tests/`
-    (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
+  # PWD: `/arkime` -> `/arkime/capture/plugins/` 
+  (cd capture/plugins; make) && \
+  (cd ../ja4; make) && \
+  # PWD: `/arkime` -> `/arkime/tests/`
+  (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
 RUN mv capture/plugins/ja4plus*.so ${ARKIME_INSTALL_DIR}/plugins/ && \
-    rm -f capture/plugins/ja4plus.c
+  rm -f capture/plugins/ja4plus.c
 
 
 WORKDIR ${ARKIME_INSTALL_DIR}
@@ -129,7 +154,7 @@ RUN \
   # gem install --no-document fpm && \
   rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8005
-EXPOSE 3220
+EXPOSE 8005/tcp
+EXPOSE 3220/tcp
 
 ENTRYPOINT ["/opt/arkime/app/start_arkime.sh"]

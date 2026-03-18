@@ -85,7 +85,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/dev6.Dockerfile
+          file: docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
@@ -108,7 +108,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/dev6.Dockerfile
+          file: docker/Dockerfile
           push: true
           tags: ${{ steps.meta_ghcr.outputs.tags }}
           build-args: |

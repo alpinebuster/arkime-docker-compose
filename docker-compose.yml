@@ -4,13 +4,14 @@
 # Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
 # Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
 # 
-# `sudo chown -R 1000:1000 ./db`, `sudo rm -rf ./db/node-1/os/*`, `sudo rm -rf ./db/main/os/*` and delete `./etc/.initialized` file
-# `source .env`
+#   `sudo chown -R 1000:1000 ./db`, `sudo rm -rf ./db/node-1/os/*`, `sudo rm -rf ./db/main/os/*` and delete `./etc/.initialized` file
+#   `source .env`
 # 
-# `docker compose --progress=plain -f docker-compose.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.yml --profile optional build arkime-docs --no-cache=true`
-# `docker compose -f docker-compose.yml up -d`
-# `docker compose -f docker-compose.yml down`
-# `docker compose -f docker-compose.yml restart arkime-capture`
+#   `docker compose --progress=plain build `
+#   `docker compose --progress=plain -f docker-compose.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.yml --profile optional build arkime-docs --no-cache=true`
+#   `docker compose -f docker-compose.yml up -d`
+#   `docker compose -f docker-compose.yml down`
+#   `docker compose -f docker-compose.yml restart arkime-capture`
 # 
 services:
   test-os:
@@ -147,7 +148,7 @@ services:
   arkime-setup:
     build:
       context: .
-      dockerfile: ./docker/dev6.Dockerfile
+      dockerfile: ./docker/Dockerfile
       args:
         - DOCKER_UBUNTU_VERSION=${DOCKER_UBUNTU_VERSION}
         - PYTHON=${PYTHON}

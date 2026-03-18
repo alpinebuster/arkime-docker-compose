@@ -147,7 +147,7 @@ services:
   base-image-builder:
     build:
       context: .
-      dockerfile: ./docker/dev6.Dockerfile
+      dockerfile: ./docker/Dockerfile
       args:
         - DOCKER_UBUNTU_VERSION=${DOCKER_UBUNTU_VERSION}
         - PYTHON=${PYTHON}
