@@ -19,7 +19,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 LABEL org.opencontainers.image.authors="alpinebuster <imzqqq@hotmail.com>"
 LABEL org.opencontainers.image.source='https://github.com/alpinebuster/arkime-docker-compose'
-LABEL org.opencontainers.image.description="DTA with Arkime 6 dev builds"
+LABEL org.opencontainers.image.description="DTA with Arkime 6.1.0 builds"
 LABEL org.opencontainers.image.licenses='AGPL-3.0-or-later'
 
 ENV DEBIAN_FRONTEND=noninteractive
