@@ -26,7 +26,7 @@ jobs:
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
@@ -35,7 +35,7 @@ jobs:
             type=sha
       - name: Docker meta (cuda/parsers)
         id: meta_cuda
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_IMAGE_CUDA }}
           tags: |
@@ -44,7 +44,7 @@ jobs:
             type=sha
       - name: Docker meta for GHCR
         id: meta_ghcr
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_IMAGE_GHCR }}
           tags: |
@@ -53,7 +53,7 @@ jobs:
             type=sha
       - name: Docker meta for GHCR (cuda/parsers)
         id: meta_ghcr_cuda
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_IMAGE_GHCR_CUDA }}
           tags: |
