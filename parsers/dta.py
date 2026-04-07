@@ -1,10 +1,10 @@
 import sys
 
-# import torch
-
 import arkime
 import arkime_session
 import arkime_packet
+
+torch = arkime.get_torch_module()
 
 # Create a new field in the session we will be setting
 # REF: `https://arkime.com/taggerformat`
@@ -14,9 +14,13 @@ pos = arkime.field_define("dta_rulz", "group:general;kind:lotermfield;db:dta_rul
 #      `https://arkime.com/python`
 print("\nDTA Python Module", "VERSION", arkime.VERSION, "CONFIG_PREFIX", arkime.CONFIG_PREFIX, "POS", pos)
 
-# print("Device Count: ", torch.cuda.device_count())
-# for i in range(torch.cuda.device_count()):
-#     print("Device: ", i, torch.cuda.get_device_name(i), "\n")
+print("Torch Version:", torch.__version__)
+cuda_available = torch.cuda.is_available()
+print("CUDA Available:", cuda_available)
+if cuda_available:
+    print("Device Count: ", torch.cuda.device_count())
+    for i in range(torch.cuda.device_count()):
+        print("Device: ", i, torch.cuda.get_device_name(i), "\n")
 
 def my_parsers_cb(session, packetBytes, packetLen, direction) -> int:
     # Write code here to parse the bytes and extract information
@@ -160,6 +164,6 @@ arkime.register_save(my_save_callback)
 # #define IPPROTO_MPTCP		IPPROTO_MPTCP
 #     IPPROTO_MAX
 #   };
-# 
+#
 # FIXME
 #arkime_packet.set_ip_cb(0x06, my_ip_cb)

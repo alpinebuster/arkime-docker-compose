@@ -4,6 +4,8 @@ Python Arkime Module
 The Python Arkime module has high level methods to register callbacks for packet processing.
 """
 
+from typing import Any
+
 from .types import ClassifyCb, SaveCb, PortKind
 
 # === Constants ===
@@ -20,6 +22,9 @@ PORT_SCTP_SRC: PortKind
 PORT_SCTP_DST: PortKind
 
 # === Methods ===
+def get_torch_module() -> Any:
+    ...
+
 def field_define(fieldExpression: str, fieldDefinition: str) -> int:
     """
     Create a new field that can be used in sessions. This method returns a fieldPosition that can be used in other calls for faster field access.
