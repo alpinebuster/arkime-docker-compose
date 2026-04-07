@@ -14,7 +14,7 @@ Create a `example.py` file at `/opt/arkime/parsers/` folder.
 ### Download Installer for Linux Ubuntu 24.04 x86_64
 The base installer is available for download below.
 
-#### CUDA Toolkit Installer	
+#### CUDA Toolkit Installer
 Installation Instructions:
 
 ```sh
@@ -23,10 +23,10 @@ sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt-get update
 sudo apt-get -y install cuda-toolkit-13-0
 
-export PATH=/usr/local/cuda/bin:$PATH
+export PATH=/usr/local/cuda-13.0/bin:$PATH
 ```
 
-#### Driver Installer	
+#### Driver Installer
 
 NVIDIA Driver Instructions (choose one option)
 To install the open kernel module flavor:
@@ -40,10 +40,18 @@ To install the proprietary kernel module flavor:
 sudo apt-get install -y cuda-drivers
 ```
 
+For Ubuntu 22 or below:
+
+```sh
+sudo apt install ubuntu-drivers-common
+ubuntu-drivers devices
+sudo ubuntu-drivers autoinstall
+```
+
 ### nvidia-docker
 
 - `sudo fuser -v /dev/nvidia*`
-- `sudo nvidia-docker run -p 11050:11250 --name=pytorch_container_name -v ~/workspace:/root/workspace -v /data:/root/data --shm-size 64g --device /dev/nvidiactl --device /dev/nvidia-uvm --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia2 --device /dev/nvidia3 -it pytorch_image_name /bin/bash`
+- `sudo nvidia-docker run -p 11050:11250 --name=pytorch_container_name -v ./:/root/workspace -v /data:/root/data --shm-size 64g --device /dev/nvidiactl --device /dev/nvidia-uvm --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia2 --device /dev/nvidia3 -it pytorch_image_name /bin/bash`
 
 **Installing on Ubuntu and Debian**
 
@@ -89,7 +97,7 @@ sudo systemctl restart docker docker.socket
 At this point, a working setup can be tested by running a base CUDA container:
 
 ```sh
-sudo docker run --rm --runtime=nvidia --gpus all nvidia/cuda:12.6.3-cudnn-devel-ubuntu24.04 nvidia-smi
+sudo docker run --rm --runtime=nvidia --gpus all nvidia/cuda:13.0.1-cudnn-runtime-ubuntu24.04 nvidia-smi
 ```
 
 If there is no `nvidia` runtime, add this Daemon configuration file to `/etc/docker/daemon.json`:

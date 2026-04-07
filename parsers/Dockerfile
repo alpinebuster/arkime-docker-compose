@@ -83,7 +83,7 @@ FROM $FROM
     --mount=type=cache,target=/root/.cache/pypoetry \
     # export POETRY_VIRTUALENVS_CREATE=false && \
     . "$HOME/.cargo/env" && \
-    poetry install --no-interaction --extras gpu --extras local -vv
+    poetry install --no-interaction --extras gpu -vv
 
   # Expose viewer listener port
   EXPOSE 8005/tcp

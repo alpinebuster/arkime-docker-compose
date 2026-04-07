@@ -1,14 +1,15 @@
+#
 # NOTE: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]; for more information see [https://www.elastic.co/guide/en/elasticsearch/reference/8.17/bootstrap-checks-max-map-count.html]
 # Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
 # Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
-# 
+#
 # `sudo chown -R 1000:1000 ./db/main/* ./db/node-1/*`
 # `source .env`
-# 
+#
 # `docker compose --progress=plain build --no-cache=true`, `docker compose --progress=plain --profile optional build arkime-docs --no-cache=true`
 # `docker compose up -d`
 # `docker compose down`
-# 
+#
 services:
   arkime_es_os-main:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ES_STACK_VERSION}
