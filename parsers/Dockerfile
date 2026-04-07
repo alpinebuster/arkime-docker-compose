@@ -1,25 +1,25 @@
 # syntax=docker/dockerfile:1-labs
 
-# 
+#
 # NOTE:
-# 
+#
 # At project's root dir:
-#   1. Make sure that the `zzz/arkime:$ARKIME_RELEASE_TAG` image is already available locally
-#      `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/Dockerfile .`
+#   1. Make sure that the `alpinebuster/arkime:$ARKIME_RELEASE_TAG` image is already available locally
+#      `DOCKER_BUILDKIT=1 docker build --progress=plain -t alpinebuster/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/Dockerfile .`
 #   2. Make sure that the nvidia driver and `nvidia-container-toolkit` are installed on the host machine, see `parsers/README.md` for how to install it
-#      `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime-cuda:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg FROM=zzz/arkime:latest -f parsers/Dockerfile .`
+#      `DOCKER_BUILDKIT=1 docker build --progress=plain -t alpinebuster/arkime-cuda:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg FROM=alpinebuster/arkime:latest -f parsers/Dockerfile .`
 #   3. Run `nvidia-smi` to test
-#      `docker run --network arkime_es_os -e INITIALIZE_DB=false -e WIPE_DB=false -e CAPTURE=off -e VIEWER=off -e ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT} -v $(pwd)/scripts/start_arkime.sh:/opt/arkime/app/start_arkime.sh -it --rm --runtime=nvidia --gpus all zzz/arkime-cuda:latest`
-#      `docker run -it --rm --entrypoint /bin/bash --gpus all zzz/arkime-cuda:latest`
-#      `docker run -it --rm --entrypoint /bin/bash --gpus all zzz/arkime-cuda:latest -c nvidia-smi`
-#      `docker run --rm --entrypoint /bin/bash --gpus all zzz/arkime-cuda:latest -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true" /usr/bin/nvidia-smi`
+#      `docker run --network arkime_es_os -e INITIALIZE_DB=false -e WIPE_DB=false -e CAPTURE=off -e VIEWER=off -e ARKIME__elasticsearch=http://${ES_OS_USERNAME}:${ES_OS_PASSWORD}@${ES_OS_HOST}:${ES_OS_PORT} -v $(pwd)/scripts/start_arkime.sh:/opt/arkime/app/start_arkime.sh -it --rm --runtime=nvidia --gpus all alpinebuster/arkime-cuda:latest`
+#      `docker run -it --rm --entrypoint /bin/bash --gpus all alpinebuster/arkime-cuda:latest`
+#      `docker run -it --rm --entrypoint /bin/bash --gpus all alpinebuster/arkime-cuda:latest -c nvidia-smi`
+#      `docker run --rm --entrypoint /bin/bash --gpus all alpinebuster/arkime-cuda:latest -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true" /usr/bin/nvidia-smi`
 #      `docker run --rm --gpus all nvidia/cuda:13.0.1-cudnn-runtime-ubuntu${DOCKER_UBUNTU_VERSION} bash -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true"`
-# 
+#
 
 ARG ARKIME_RELEASE_TAG=main
-ARG FROM=zzz/arkime:$ARKIME_RELEASE_TAG
+ARG FROM=alpinebuster/arkime:$ARKIME_RELEASE_TAG
 ARG DOCKER_UBUNTU_VERSION=24.04
-# NOTE: `ARG PYTHON=python3.12` is set by default in `zzz/arkime:latest` base image
+# NOTE: `ARG PYTHON=python3.12` is set by default in `alpinebuster/arkime:latest` base image
 ARG PYTHON_VERSION=3.12
 
 # first of all, we create a base image with dependencies which we can copy into the

@@ -3,16 +3,16 @@
 # NOTE: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]; for more information see [https://www.elastic.co/guide/en/elasticsearch/reference/8.17/bootstrap-checks-max-map-count.html]
 # Temp -> `sudo sysctl -w vm.max_map_count=262144` -> `sudo reboot`
 # Permanently -> `sudo vi /etc/sysctl.conf` -> add `vm.max_map_count=262144`, `net.core.rmem_max=134217728`, `net.core.wmem_max=134217728` -> `sudo sysctl -p`
-# 
+#
 #   `sudo chown -R 1000:1000 ./db`, `sudo rm -rf ./db/node-1/os/*`, `sudo rm -rf ./db/main/os/*` and delete `./etc/.initialized` file
 #   `source .env`
-# 
+#
 #   `docker compose --progress=plain build `
 #   `docker compose --progress=plain -f docker-compose.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.yml --profile optional build arkime-docs --no-cache=true`
 #   `docker compose -f docker-compose.yml up -d`
 #   `docker compose -f docker-compose.yml down`
 #   `docker compose -f docker-compose.yml restart arkime-capture`
-# 
+#
 services:
   test-os:
     image: opensearchproject/opensearch:$OS_STACK_VERSION
@@ -153,7 +153,7 @@ services:
         - DOCKER_UBUNTU_VERSION=${DOCKER_UBUNTU_VERSION}
         - PYTHON=${PYTHON}
     pull_policy: never
-    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    image: alpinebuster/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-setup
     restart: on-failure:12
     env_file: ["./.env"]
@@ -191,7 +191,7 @@ services:
 
   arkime-capture:
     pull_policy: never
-    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    image: alpinebuster/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-capture
     network_mode: "host"
     cap_add:
@@ -248,7 +248,7 @@ services:
 
   arkime-viewer:
     pull_policy: never
-    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    image: alpinebuster/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-viewer
     restart: on-failure
     env_file: ["./.env"]
@@ -296,7 +296,7 @@ services:
 
   arkime-parliament:
     pull_policy: never
-    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    image: alpinebuster/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-parliament
     restart: on-failure
     env_file: ["./.env"]
@@ -341,7 +341,7 @@ services:
 
   arkime-wise:
     pull_policy: never
-    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    image: alpinebuster/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-wise
     restart: on-failure
     env_file: ["./.env"]
@@ -386,7 +386,7 @@ services:
 
   arkime-cont3xt:
     pull_policy: never
-    image: zzz/arkime:${ARKIME_RELEASE_TAG}
+    image: alpinebuster/arkime:${ARKIME_RELEASE_TAG}
     container_name: arkime-cont3xt
     restart: on-failure
     env_file: ["./.env"]
@@ -434,7 +434,7 @@ services:
       context: ./docs
       dockerfile: ../docker/docs.Dockerfile
     pull_policy: never
-    image: zzz/arkime-docs:${ARKIME_RELEASE_TAG}
+    image: alpinebuster/arkime-docs:${ARKIME_RELEASE_TAG}
     container_name: arkime-docs
     restart: on-failure:12
     ports:

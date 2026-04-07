@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1-labs
 
-# 
+#
 # NOTE:
-# 
-# At project's root dir: `DOCKER_BUILDKIT=1 docker build --progress=plain -t zzz/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/Dockerfile .`
-# 
+#
+# At project's root dir: `DOCKER_BUILDKIT=1 docker build --progress=plain -t alpinebuster/arkime:latest --build-arg DOCKER_UBUNTU_VERSION=24.04 --build-arg PYTHON=python3.12 -f docker/Dockerfile .`
+#
 
 ARG DOCKER_UBUNTU_VERSION=24.04
 FROM ubuntu:${DOCKER_UBUNTU_VERSION}
@@ -127,14 +127,14 @@ ENV PATH="${ARKIME_INSTALL_DIR}/bin:${ARKIME_APP_DIR}:${PATH}"
 # ja4plus
 # PWD: `/arkime/` -> `/arkime/`
 # Switching to the parent directory (cd ..) in a subshell only affects that subshell and does not impact the main shell's state. This means that after this step, the working directory of the main shell remains unchanged.
-# 
+#
 # Running Multiple Commands
 # Using a semicolon (;) allows multiple commands to be executed in sequence within the parentheses. All commands are executed in the same subshell, maintaining the dependencies between the commands.
 WORKDIR /arkime
 
 RUN (cd .. ; git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/alpinebuster/arkime-ja4.git ./ja4)
 RUN cp ../ja4/ja4plus.c capture/plugins && \
-  # PWD: `/arkime` -> `/arkime/capture/plugins/` 
+  # PWD: `/arkime` -> `/arkime/capture/plugins/`
   (cd capture/plugins; make) && \
   (cd ../ja4; make) && \
   # PWD: `/arkime` -> `/arkime/tests/`
