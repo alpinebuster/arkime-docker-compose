@@ -16,7 +16,7 @@
 #      `docker run --rm --gpus all nvidia/cuda:13.0.1-cudnn-runtime-ubuntu${DOCKER_UBUNTU_VERSION} bash -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true"`
 #
 
-ARG ARKIME_RELEASE_TAG=main
+ARG ARKIME_RELEASE_TAG=latest
 ARG FROM=alpinebuster/arkime:$ARKIME_RELEASE_TAG
 ARG DOCKER_UBUNTU_VERSION=24.04
 # NOTE: `ARG PYTHON=python3.12` is set by default in `alpinebuster/arkime:latest` base image

@@ -7,6 +7,7 @@
 # `sudo chown -R 1000:1000 ./db`, `sudo rm -rf ./db/node-1/os/*`, `sudo rm -rf ./db/main/os/*` and delete `sudo rm -rf ./etc/.initialized` file
 # `source .env`
 #
+# `docker compose -f docker-compose.cuda.yml build base-image-builder`
 # `docker compose --progress=plain -f docker-compose.cuda.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.cuda.yml --profile optional build arkime-docs --no-cache=true`
 # `docker compose -f docker-compose.cuda.yml up -d`
 # `docker compose -f docker-compose.cuda.yml down`
@@ -190,6 +191,7 @@ services:
     restart: on-failure:12
     env_file: ["./.env"]
     environment:
+      - ARKIME_RELEASE_TAG=${ARKIME_RELEASE_TAG}
       - PYTHON=${PYTHON}
       - ARKIME_VERSION=${ARKIME_VERSION}
       # NOTE: Set to true on first execution, then false subsequently
