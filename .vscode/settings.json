@@ -14,6 +14,9 @@
         "./parsers/stubs"
     ],
     "files.associations": {
-        "arkime.h": "c"
-    }
+        "*.in": "plaintext",
+        "arkime.h": "c",
+        "python.h": "c"
+    },
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

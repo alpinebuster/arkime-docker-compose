@@ -101,6 +101,10 @@ RUN \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
   git clone -b ${ARKIME_BRANCH} https://github.com/alpinebuster/arkime.git && \
   (cd arkime; PYTHON=${PYTHON} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
+ENV TDIR=/opt/arkime
+ENV PATH=$TDIR/bin:$PATH
+RUN npm config set strict-ssl false
+RUN npm config set registry https://registry.npmmirror.com
 RUN \
   (cd /arkime; ldd capture/capture) && \
   export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
