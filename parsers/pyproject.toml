@@ -14,8 +14,8 @@ package-mode = false  # Disable packaging mode, only for dependency management
 [[tool.poetry.source]]
 name = "tsinghua"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
-# priority = "primary"
-priority = "supplemental"
+priority = "primary"
+# priority = "supplemental"
 [[tool.poetry.source]]
 name = "aliyun"
 url = "https://mirrors.aliyun.com/pypi/simple/"
