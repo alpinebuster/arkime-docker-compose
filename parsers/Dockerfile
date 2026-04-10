@@ -14,6 +14,8 @@
 #      `docker run -it --rm --entrypoint /bin/bash --gpus all alpinebuster/arkime-cuda:latest -c nvidia-smi`
 #      `docker run --rm --entrypoint /bin/bash --gpus all alpinebuster/arkime-cuda:latest -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true" /usr/bin/nvidia-smi`
 #      `docker run --rm --gpus all nvidia/cuda:13.0.1-cudnn-runtime-ubuntu${DOCKER_UBUNTU_VERSION} bash -c "command -v nvidia-smi || echo 'nvidia-smi not found'; ls -l /usr/bin | grep nvidia || true"`
+#   4. Test pytorch
+#      `docker run --rm --gpus all alpinebuster/arkime-cuda:latest python3 -c "import torch; print('CUDA Available:', torch.cuda.is_available()); print('Torch Version:', torch.__version__)"`
 #
 
 ARG ARKIME_RELEASE_TAG=latest
@@ -47,13 +49,14 @@ FROM $FROM
   # Environmental variables
   RUN ln -s /usr/local/cuda-13.0 /usr/local/cuda || true
   ENV PATH=/usr/local/cuda/bin:${PATH}
-  ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+  ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}
 
-  RUN python3 -m venv /opt/venv
-  ENV PATH="/opt/venv/bin:$PATH"
+  WORKDIR /root
+  RUN curl -sSL https://install.python-poetry.org | python3 -
+  ENV PATH="/root/.local/bin:$PATH"
 
   WORKDIR ${ARKIME_INSTALL_DIR}/parsers/
-  COPY parsers/ ${ARKIME_INSTALL_DIR}/parsers/
+  COPY parsers/pyproject.toml parsers/poetry.lock* ./
   RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -70,20 +73,17 @@ FROM $FROM
     rustup default stable && \
     rustc --version && cargo --version
 
-  RUN \
-    --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=cache,target=/root/.cache/pypoetry \
-    python3 -m pip install --upgrade pip setuptools wheel && \
-    python3 -m pip install poetry && \
-    python3 -m pip install --no-cache-dir maturin setuptools-rust
-
   WORKDIR ${ARKIME_INSTALL_DIR}/parsers/
   RUN \
     --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/pypoetry \
-    # export POETRY_VIRTUALENVS_CREATE=false && \
+    poetry config virtualenvs.in-project true && \
     . "$HOME/.cargo/env" && \
     poetry install --no-interaction --extras gpu -vv
+  ENV VIRTUAL_ENV=${ARKIME_INSTALL_DIR}/parsers/.venv
+  ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+  COPY parsers/ .
 
   # Expose viewer listener port
   EXPOSE 8005/tcp
