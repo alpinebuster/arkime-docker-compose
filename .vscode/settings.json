@@ -6,7 +6,8 @@
         "netflow",
         "opensearch",
         "pfring",
-        "spidata"
+        "spidata",
+        "unpythonic"
     ],
     "editor.fontSize": 13,
     "remote.autoForwardPorts": false,
