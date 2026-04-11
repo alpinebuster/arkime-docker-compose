@@ -22,7 +22,7 @@ PORT_SCTP_SRC: PortKind  # Match SCTP source port
 PORT_SCTP_DST: PortKind  # Match SCTP destination port
 
 # === Methods ===
-def get_torch_module() -> Any:
+def get_module(module_name: str) -> Any:
     ...
 
 def field_define(fieldExpression: str, fieldDefinition: str) -> int:

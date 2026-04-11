@@ -17,7 +17,8 @@
     "files.associations": {
         "*.in": "plaintext",
         "arkime.h": "c",
-        "python.h": "c"
+        "python.h": "c",
+        "arkimeconfig.h": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }
