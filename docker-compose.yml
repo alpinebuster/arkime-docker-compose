@@ -9,6 +9,7 @@
 #
 #   `docker compose --progress=plain build `
 #   `docker compose --progress=plain -f docker-compose.yml build --no-cache=true`, `docker compose --progress=plain -f docker-compose.yml --profile optional build arkime-docs --no-cache=true`
+# 
 #   `docker compose -f docker-compose.yml up -d`
 #   `docker compose -f docker-compose.yml down`
 #   `docker compose -f docker-compose.yml restart arkime-capture`
