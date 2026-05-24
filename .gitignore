@@ -1,6 +1,5 @@
 .env
 .initialized
-wise
 
 # rust
 /target/
@@ -35,3 +34,4 @@ __pycache__
 **/*/*.so
 
 *.deb
+code.png

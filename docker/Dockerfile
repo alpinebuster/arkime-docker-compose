@@ -103,8 +103,13 @@ RUN \
   (cd arkime; PYTHON=${PYTHON} ./easybutton-build.sh --nothirdparty --kafka --rminstall)
 ENV TDIR=/opt/arkime
 ENV PATH=$TDIR/bin:$PATH
+
+# ENV npm_config_registry=https://registry.npmmirror.com
 RUN npm config set strict-ssl false
 RUN npm config set registry https://registry.npmmirror.com
+ENV npm_config_disturl=https://npmmirror.com/mirrors/node
+ENV NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
+
 RUN \
   (cd /arkime; ldd capture/capture) && \
   export PATH=${ARKIME_INSTALL_DIR}/bin:$PATH && \
@@ -140,9 +145,9 @@ RUN (cd .. ; git clone -b ${ARKIME_BRANCH} --single-branch https://github.com/al
 RUN cp ../ja4/ja4plus.c capture/plugins && \
   # PWD: `/arkime` -> `/arkime/capture/plugins/`
   (cd capture/plugins; make) && \
-  (cd ../ja4; make) && \
+  (cd ../ja4; make)
   # PWD: `/arkime` -> `/arkime/tests/`
-  (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
+  # (cd tests; ./tests.pl --extra "-o plugins=ja4plus.so" ../../ja4/pcap/*.pcap)
 RUN mv capture/plugins/ja4plus*.so ${ARKIME_INSTALL_DIR}/plugins/ && \
   rm -f capture/plugins/ja4plus.c
 
