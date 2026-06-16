@@ -82,7 +82,7 @@ jobs:
 
       - name: Build and push image
         if: ${{ github.event_name == 'push' }}
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile
@@ -93,7 +93,7 @@ jobs:
           platforms: linux/amd64
       - name: Build and push CUDA (parsers) image
         if: ${{ github.event_name == 'push' }}
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: parsers/Dockerfile
@@ -105,7 +105,7 @@ jobs:
           platforms: linux/amd64
       - name: Build and push GHCR image
         if: ${{ github.event_name == 'push' }}
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile
@@ -116,7 +116,7 @@ jobs:
           platforms: linux/amd64
       - name: Build and push GHCR CUDA (parsers) image
         if: ${{ github.event_name == 'push' }}
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: parsers/Dockerfile
